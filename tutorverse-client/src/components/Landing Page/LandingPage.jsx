@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from 'react-router-dom';
+import Button from '@mui/material/Button';
 import "./LandingPage.css";
 
 export default function LandingPage() {
@@ -25,6 +27,13 @@ export default function LandingPage() {
         <div className="intro1">
           <img src="./src/assets/tutoring.jpg" alt="display image" />
         </div>
+      </div>
+      <div>
+        <Link to={'/pick_role'}>
+          {/* <button className="get-started-btn"> Get Started</button> */}
+          <Button variant="contained">Get Started</Button>
+        </Link>
+        
       </div>
     </div>
   );

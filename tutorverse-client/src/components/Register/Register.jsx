@@ -1,6 +1,11 @@
+
+import { Link } from 'react-router-dom';
+import Login from '../Login/Login';
 import './Register.css'
 
 export default function(){
+
+    return(
     <div className='main'>
 
         <div>
@@ -11,18 +16,23 @@ export default function(){
             <div className='right'>
                 <div className='signup-form'>
                     Sign up here
-                    <input type="text" label="Full Name" id="name-input" aria-label='name input'/>
-                    <input type="text" label="Email Address" id="email-input" aria-label='email input' />
-                    <input type="password" label="Create Password" id="password-input" aria-label='password input' />
-                    <input type="password" label="Confirm Password" id="confirm-password" aria-label='confirm password'/>
+                    <input type="text" label="Full Name" id="name-input" aria-label='name input' placeholder='enter name'/>
+                    <input type="text" label="Email Address" id="email-input" aria-label='email input' placeholder='enter email' />
+                    <input type="password" label="Create Password" id="password-input" aria-label='password input' placeholder='enter password'/>
+                    <input type="password" label="Confirm Password" id="confirm-password" aria-label='confirm password' placeholder='confirm password'/>
                     <button className='register-btn'>
-                        Register Now
+                        Register
                     </button>
-                    <p>Existing user? Login</p> 
+                    <p>Existing user? 
+                        <Link to={'/login'}>
+                            <p>Login</p>
+                        </Link>
+                    </p> 
                 </div>
             </div>
         </div>
         
 
     </div>
+    );
 }

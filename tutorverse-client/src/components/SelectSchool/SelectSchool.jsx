@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import "./SelectSchool.css"
 
 export default function SelectSchool (){
@@ -12,9 +13,12 @@ export default function SelectSchool (){
             </div>
         </div>
         <div>
-            <button className="proceed-btn">
-                Proceed
-            </button>
+            <Link to={'/register'}>
+                <button className="proceed-btn">
+                    Proceed
+                </button>
+            </Link>
+            
         </div>
 
 
