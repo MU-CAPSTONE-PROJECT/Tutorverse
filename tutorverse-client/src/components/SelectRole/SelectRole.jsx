@@ -20,7 +20,7 @@ export default function SelectRole(){
         </div>
         <div className='join-now'>
             Let's find you a cool tutor
-            <Link to={'/register'}>
+            <Link to={'/pick_school'}>
                 <button> Join now</button>
             </Link>
             

@@ -1,7 +1,13 @@
 import { Link } from "react-router-dom"
+import { useEffect } from "react"
 import "./SelectSchool.css"
 
 export default function SelectSchool (){
+
+   
+
+
+    return(
 
     <div>
         <div>
@@ -23,7 +29,7 @@ export default function SelectSchool (){
 
 
     </div>
-
+    )
 
 }
 
