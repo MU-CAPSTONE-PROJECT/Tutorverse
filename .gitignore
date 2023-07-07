@@ -1,2 +1,3 @@
 node_modules/
-tutorverse-server/
+*.json
+.env
