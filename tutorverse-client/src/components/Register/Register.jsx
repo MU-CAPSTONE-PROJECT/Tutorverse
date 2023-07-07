@@ -25,7 +25,7 @@ export default function(){
                     </button>
                     <p>Existing user? 
                         <Link to={'/login'}>
-                            <p>Login</p>
+                            Login
                         </Link>
                     </p> 
                 </div>

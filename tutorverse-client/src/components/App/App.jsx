@@ -4,6 +4,7 @@ import SelectRole from "../SelectRole/SelectRole";
 import SelectSchool from "../SelectSchool/SelectSchool";
 import Register from "../Register/Register";
 import axios from 'axios'
+import { useState } from "react";
 import Login from "../Login/Login";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -11,11 +12,15 @@ import { useEffect } from "react";
 import "./App.css";
 
 export default function App() {
-  let Schools;
-  const [error, setError] = React.useState('');
-
+  const [error, setError] = useState('');
+  const [schools, setSchools] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
   useEffect(() => {
-
+    let schoolsList;
+    
+    
+    
     const fetchSchools = async () => {
       try {
           const response = await axios.get(
@@ -29,26 +34,36 @@ export default function App() {
               },
             }
           );
-          const data = await response.data; // Here you have the data that you need
+          const data = response.data; // Here you have the data that you need
           console.log(data)
-          Schools = data.results;
-          console.log(Schools);
+          schoolsList = data.results;
+          console.log(schoolsList);
+          const s=schoolsList.map((school) =>
+          school.name
+          )
+          setSchools(s);
+          setIsLoading(false);
+          console.log(s)
+          console.log(schoolsList)
         
       } catch (error) {
         setError('Sorry. No schools found')
+        setIsLoading(false);
         console.log("Error:", error);
       }
     };
     fetchSchools();
-  });
-  
+  },[]);
+  if (isLoading) {
+    return <div>Loading...</div>; // Display a loading indicator while data is being fetched
+  }else{
   return (
     <div className="app">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/pick_role" element={<SelectRole />} />
-          <Route path="/pick_school" element={<SelectSchool />} />
+          <Route path="/pick_school" element={<SelectSchool schools={schools}/>} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
         </Routes>
@@ -56,3 +71,4 @@ export default function App() {
     </div>
   );
 }
+};
