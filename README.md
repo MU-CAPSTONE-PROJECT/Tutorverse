@@ -24,45 +24,45 @@ Finding a tutor on campus can be frustrating for students who need quick tutorin
 - Can receive a reminder to clock in and out when working hours start and end
 
 
-## Project Plan
+#### Project Plan
 
 # Screen Archetypes
 <img src='tutorverse-client/src/assets/Tutorverse Wireframes.png' width=100%>
 
 
 
-# WEEK 1 Tasks
+### WEEK 1 Tasks
 - Project setup
-[x] Github repository
-[x] Database setup/connection
-[x] VS code environment setup
+- [x] Github repository
+- [x] Database setup/connection
+- [x] VS code environment setup
 - Create UI for landing page
-[x] Create UI
+- [x] Create UI
 - Can select school campus community from a list
-[x] Create UI for school selection drop-down
-[x] Implement API fetch for schools list (Third-party API requirement)
+- [x] Create UI for school selection drop-down
+- [x] Implement API fetch for schools list (Third-party API requirement)
 - Can signup/register for an account
-[x] Create UI for sign-up and login forms with input fields
-[x] Create data model for users table to store input fields
-[x] Handle client-side code for sign-up form submission
-[x] Create user registration POST request endpoint 
+- [x] Create UI for sign-up and login forms with input fields
+- [x] Create data model for users table to store input fields
+- [x] Handle client-side code for sign-up form submission
+- [x] Create user registration POST request endpoint 
 
 - User can login
-[x] Handle login form submission on client code
-[x] Login POST request endpoint
+- [x] Handle login form submission on client code
+- [x] Login POST request endpoint
 
 
 - Week 1 tasks wrap-up
-[x] Test to make sure everything works
-[x] Ask for feedback from IM and peers
+- [x] Test to make sure everything works
+- [x] Ask for feedback from IM and peers
 
-# WEEK 2 Tasks
-[ ] Handle password encryption and validation
-[ ] Handle authentication state and session management
+### WEEK 2 Tasks
+- [ ] Handle password encryption and validation
+- [ ] Handle authentication state and session management
 - Displaying list of tutors
-[ ] API endpoint for student home
-[ ] Fetch List of tutors from database
-[ ] API endpoint for viewing selected tutor
+- [ ] API endpoint for student home
+- [ ] Fetch List of tutors from database
+- [ ] API endpoint for viewing selected tutor
 - Waitlist
 
 ## THIRD-PARTY APIS
