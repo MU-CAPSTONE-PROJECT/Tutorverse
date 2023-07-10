@@ -7,44 +7,33 @@ import axios from 'axios'
 import { useState } from "react";
 import Login from "../Login/Login";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 import { useEffect } from "react";
 import "./App.css";
 
+
 export default function App() {
   const [error, setError] = useState('');
-  const [schools, setSchools] = useState([]);
+  const [schools, setSchools] = useState([]);  //State variable to store array of schools
   const [isLoading, setIsLoading] = useState(true);
   
+
   useEffect(() => {
     let schoolsList;
-    
-    
     
     const fetchSchools = async () => {
       try {
           const response = await axios.get(
-            "https://parseapi.back4app.com/classes/Usuniversitieslist_University?&order=name",
-            {
-              headers: {
-                "X-Parse-Application-Id":
-                  "zmU5EWxwmKH1PAFE1rzjS7OIBbHu9AkHCluAvg1A", // This is your app's application id
-                "X-Parse-REST-API-Key":
-                  "7nlbgFrZGpAzwQ9laCtrSm25ioO1vgclGw86ajl2", // This is your app's REST API key
-              },
-            }
-          );
-          const data = response.data; // Here you have the data that you need
+            "http://localhost:3000/pick_uni"); //fetching schools list from server
+
+          const data = response.data; 
           console.log(data)
           schoolsList = data.results;
           console.log(schoolsList);
-          const s=schoolsList.map((school) =>
+          const s = schoolsList.map((school) =>
           school.name
           )
           setSchools(s);
           setIsLoading(false);
-          console.log(s)
-          console.log(schoolsList)
         
       } catch (error) {
         setError('Sorry. No schools found')
