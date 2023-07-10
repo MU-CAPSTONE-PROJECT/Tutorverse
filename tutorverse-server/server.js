@@ -5,12 +5,33 @@ const app = express();
 
 const cors = require('cors');
 
+const {sequelize, User } = require('./data')
+
 const fetch = require('node-fetch');
+
 
 //Middleware
 app.use(cors());
 
+app.use(express.urlencoded({
+    extended: true 
+    })
+);
+
 app.use(express.json({extended: false}));
+
+
+//Testing DB connection
+async function TestConnection (){
+    try {
+        await sequelize.authenticate();
+        console.log('Connection has been established successfully.');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
+  }
+  TestConnection();
+
 
 //Test endpoint
 app.get('/', (req,res) => {
@@ -48,6 +69,17 @@ app.get('/pick_uni', (req,res) => {
     
 })
 
+//Endpoint to send new user data from signup
+app.post('/signup', async (req, res)  => {
+    const { id, firstName, lastName, emailAddress, password } = req.body;
+
+  try {
+    const newUser = await User.create({id, firstName, lastName, emailAddress, password });
+    return res.status(201).json({ message: 'User created successfully', newUser});
+  } catch (error) {
+    return res.status(400).json({ message: 'Failed to create user' });
+  }
+})
 
 app.listen(3000, function (err){
     if (!err)
