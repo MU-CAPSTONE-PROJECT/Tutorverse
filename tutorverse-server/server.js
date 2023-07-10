@@ -81,6 +81,36 @@ app.post('/signup', async (req, res)  => {
   }
 })
 
+//Endpoint to handle login
+app.post('/login', async (req, res) =>{
+
+    try{
+        const { email, password } = req.body;
+        
+        // Find the user with the provided email
+        const user = await User.findOne({ where: { emailAddress: email }});
+
+        if (user===null) {
+            return res.redirect('/register')
+        //   return res.status(404).json({ error: 'User not found.' });
+        }
+
+        // Perform password validation
+        if (user.password !== password) {
+            console.log("invalid");
+        return res.status(401).json({ error: 'Invalid password.' });
+        }
+        res.cookie("user_id", user.id);
+        return res.status(200).json({ message: 'User logged in successfully!', user });
+        
+
+    } catch (error){
+        console.error('Error:', error);
+        return res.status(500).json({ error: 'Something went wrong!'})
+    }
+}) 
+
+
 app.listen(3000, function (err){
     if (!err)
         console.log("Server is running!")

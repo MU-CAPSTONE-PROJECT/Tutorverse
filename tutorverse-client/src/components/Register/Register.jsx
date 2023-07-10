@@ -20,10 +20,10 @@ export default function  Register() {
         password,
       });
       console.log(response.data);
-      console.log("Success!")
+      console.log("Success!");
     } catch (error) {
       console.error(error);
-      console.log("Failure!")
+      console.log("Failure!");
     }
   };
 
@@ -61,7 +61,7 @@ export default function  Register() {
               id='email-input'
               aria-label='email input'
               placeholder='enter email'
-              value={email}
+              value={emailAddress}
               onChange={(e) => setEmail(e.target.value)}
             />
             <input
