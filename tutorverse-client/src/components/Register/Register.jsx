@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState , useContext} from 'react';
 import axios from 'axios';
+import { UserContext } from '../../../../userContext';
 import './Register.css';
 
 export default function  Register() {
@@ -10,20 +11,49 @@ export default function  Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  const { updateUSer } =useContext(UserContext);
+  const navigate = useNavigate();
   const handleRegisterSubmit = async () => {
 
     try {
-      const response = await axios.post('http://localhost:3000/signup', {
+      const response = await axios.post('http://localhost:3000/user/signup', {
         firstName,
         lastName,
         emailAddress,
         password,
-      });
-      console.log(response.data);
-      console.log("Success!");
+      },
+      {
+        withCredentials: true
+      }
+      );
+
+      if (response.status===201){
+        const data = response.data;
+        // const loggedInUser = data.user;
+
+        console.log(data);
+        console.log("Signup Success!");
+
+        //reset form fields
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+
+        //navigate to login page
+        navigate('/login')
+
+      } else {
+
+        //Signup failure error
+        alert('Signup Failed!')
+      }
+
+      
     } catch (error) {
       console.error(error);
-      console.log("Failure!");
+      alert("Signup Failure! Error: " +error);
     }
   };
 

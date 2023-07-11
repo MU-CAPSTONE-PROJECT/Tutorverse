@@ -3,23 +3,53 @@ const express = require('express');
 
 const app = express();
 
+const session = require('express-session');
+
 const cors = require('cors');
 
-const {sequelize, User } = require('./data')
+const {sequelize, User } = require('./data');
 
 const fetch = require('node-fetch');
 
+const bodyParser = require('body-parser')
+
+const userRoutes = require('./routes/userRoutes');
+
+const SequelizeSessionInit = require('connect-session-sequelize');
+
+const SequelizeSession = SequelizeSessionInit(session.Store);
+const sessionStore = new SequelizeSession({
+  db: sequelize,
+//   table: User, 
+});
+
 
 //Middleware
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+  }));
 
-app.use(express.urlencoded({
-    extended: true 
+app.use(bodyParser.json({extended: false}));
+
+//Session
+app.use(
+    session({
+        secret: 'secret',
+        resave: false,
+        saveUninitialized: false,
+        store: sessionStore,
+        cookie: {
+            sameSite: 'lax',
+            secure: false,
+            expires: new Date(Date.now() + (365 * 24 * 60 * 60 * 1000))
+        }
     })
+
 );
 
-app.use(express.json({extended: false}));
-
+app.use('/user', userRoutes);
+sessionStore.sync();
 
 //Testing DB connection
 async function TestConnection (){
@@ -29,18 +59,28 @@ async function TestConnection (){
     } catch (error) {
         console.error('Unable to connect to the database:', error);
     }
-  }
-  TestConnection();
-
+}
+TestConnection();
 
 //Test endpoint
-app.get('/', (req,res) => {
-    res.send('Server connected!');
+app.get('/tutors', (req,res) => {
+    const userSession = req.session.user
+    console.log(userSession)
+    if(!userSession){
+
+        res.status(200).json({isLoggedIn: false})
+
+        return
+    }
+
+    res.json({message:'User is logged in!'});
 });
 
 //Endpoint for fetching US Universities list
 app.get('/pick_uni', (req,res) => {
-    
+    const userSession = req.session.user
+    console.log(userSession)
+
     const fetchSchools = async () => {
         try {   
                 //third-party API fetch from Back4App website
@@ -56,9 +96,7 @@ app.get('/pick_uni', (req,res) => {
                     }
                 );
                 const schoolsList = await response.json();
-                console.log(schoolsList)
                 return res.json(schoolsList);
-                
             
         } catch (error) {
             console.log("Error:", error);
@@ -68,48 +106,6 @@ app.get('/pick_uni', (req,res) => {
     fetchSchools();
     
 })
-
-//Endpoint to send new user data from signup
-app.post('/signup', async (req, res)  => {
-    const { id, firstName, lastName, emailAddress, password } = req.body;
-
-  try {
-    const newUser = await User.create({id, firstName, lastName, emailAddress, password });
-    return res.status(201).json({ message: 'User created successfully', newUser});
-  } catch (error) {
-    return res.status(400).json({ message: 'Failed to create user' });
-  }
-})
-
-//Endpoint to handle login
-app.post('/login', async (req, res) =>{
-
-    try{
-        const { email, password } = req.body;
-        
-        // Find the user with the provided email
-        const user = await User.findOne({ where: { emailAddress: email }});
-
-        if (user===null) {
-            return res.redirect('/register')
-        //   return res.status(404).json({ error: 'User not found.' });
-        }
-
-        // Perform password validation
-        if (user.password !== password) {
-            console.log("invalid");
-        return res.status(401).json({ error: 'Invalid password.' });
-        }
-        res.cookie("user_id", user.id);
-        return res.status(200).json({ message: 'User logged in successfully!', user });
-        
-
-    } catch (error){
-        console.error('Error:', error);
-        return res.status(500).json({ error: 'Something went wrong!'})
-    }
-}) 
-
 
 app.listen(3000, function (err){
     if (!err)

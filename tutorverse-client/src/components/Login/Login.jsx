@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom'
+import { Link , useNavigate } from 'react-router-dom'
 import axios from 'axios';
-import { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { UserContext } from '../../../../userContext';
 import './Login.css'
 
 
@@ -8,18 +9,39 @@ export default function Login(){
 
     const [emailAddress, setEmailAddress] = useState('');
     const [password, setpassword] = useState('');
+    const { updateUser } = useContext(UserContext);
+    const navigate = useNavigate();
 
     const handleLoginSubmit = async () => {
-
+        
         try {
-            const response = await axios.post('http://localhost:3000/login', {
+            const response = await axios.post('http://localhost:3000/user/login', {
                 emailAddress,
                 password,
+            },
+            {
+                withCredentials: true
             });
-            console.log("Login Success!");
+            console.log(response)
+            if (response.status===200) {
+                const data =  response.data;
+                const loggedInUser = data.user;
+
+                //user context
+                updateUser(loggedInUser);
+
+                //Navigate to home
+                navigate('/dashboard');
+                console.log("Login Success!");
+            } else {
+                //Handle login failure
+                alert('Login failed');
+            }
+
         } catch (error) {
             console.error(error);
             console.log("Login Failure!");
+            alert('Login Failed: ' + error)
         }
     }
 
