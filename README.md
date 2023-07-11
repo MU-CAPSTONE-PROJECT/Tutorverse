@@ -52,18 +52,23 @@ Finding a tutor on campus can be frustrating for students who need quick tutorin
 - [x] Login POST request endpoint
 
 
-- Week 1 tasks wrap-up
-- [x] Test to make sure everything works
-- [x] Ask for feedback from IM and peers
+- Week 1 tasks progress gif
+![Gif](tutorverse-client/src/assets/TutorverseSignup.gif)
 
 ### WEEK 2 Tasks
-- [ ] Handle password encryption and validation
-- [ ] Handle authentication state and session management
+- [x] Handle password encryption and validation
+- [x] Handle authentication state and session management
 - Displaying list of tutors
-- [ ] API endpoint for student home
-- [ ] Fetch List of tutors from database
-- [ ] API endpoint for viewing selected tutor
-- Waitlist
+- [x] Design UI for Tutor Dashboard and student Dashboard
+- [x] Handle saving school and role data for users in database
+- [x] Tutor API for list of tutors
+- [x] Fetching tutor list from API and displaying in listview
+
+- Individual tutor
+- [x] GET request for individual tutor
+- [x] Individual tutor view component
+- [x] Handle navigation between tutor listview
+
 
 ## THIRD-PARTY APIS
 - List of US Universities: https://parseapi.back4app.com/classes/Usuniversitieslist_University?&order=name
