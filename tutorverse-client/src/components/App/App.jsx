@@ -4,10 +4,10 @@ import SelectRole from "../SelectRole/SelectRole";
 import SelectSchool from "../SelectSchool/SelectSchool";
 import Register from "../Register/Register";
 import axios from 'axios'
-import { useState } from "react";
+import { useState,useContext } from "react";
 import Login from "../Login/Login";
 import Dashboard from "../Dashboard/Dashboard";
-import { BrowserRouter, Routes, Route , useNavigate} from "react-router-dom";
+import { BrowserRouter, Routes, Route , Navigate} from "react-router-dom";
 import { useEffect } from "react";
 import "./App.css";
 import { UserContext } from "../../../../userContext";
@@ -18,11 +18,18 @@ export default function App() {
   const [schools, setSchools] = useState([]);  //State variable to store array of schools
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState('') //distinguish between tutor and student
+  const [school, setSchool] = useState(null);
 
   const [user, setUser] = useState(() => {
-    // Retrieve the user data from storage or set it to null if not found
+    try{
+      // Retrieve the user data from storage or set it to null if not found
     const storedUser = localStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : null;
+    } catch(error){
+      console.log(error)
+      return null;
+    }
+    
   });
 
   const updateUser = (newUser) => {
@@ -30,9 +37,12 @@ export default function App() {
   };
 
   useEffect(() => {
-
     // Save the user data to storage whenever the user state changes
     localStorage.setItem('user', JSON.stringify(user));
+  }, [user]);
+
+  useEffect(() => {
+
 
     let schoolsList;
    
@@ -61,7 +71,7 @@ export default function App() {
       }
     };
     fetchSchools();
-  },[user]);
+  },[]);
 
 
   if (isLoading) {
@@ -78,10 +88,10 @@ export default function App() {
               userRole={userRole}  
               setUserRole={setUserRole}
             />} />
-            <Route path="/pick_school" element={<SelectSchool schools={schools}/>} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/pick_school" element={<SelectSchool schools={schools}  school={school}  setSchool={setSchool}/>} />
+            <Route path="/register" element={<Register school={school} userRole={userRole} />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={ user ? <Dashboard userInfo={user} userRole={userRole} /> :<Login/>}/>
+            <Route path="/dashboard" element={ user ? <Dashboard userInfo={user} userRole={userRole}  /> :(<Navigate to='/login'/>)}/>
           </Routes>
         </BrowserRouter>
       </UserContext.Provider>

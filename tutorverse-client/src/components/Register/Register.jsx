@@ -4,14 +4,14 @@ import axios from 'axios';
 import { UserContext } from '../../../../userContext';
 import './Register.css';
 
-export default function  Register() {
+export default function  Register( {school, userRole} ) {
   const [firstName, setFirstName]  = useState('');
   const [lastName, setLastName] = useState('');
   const [emailAddress, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const { updateUSer } =useContext(UserContext);
+  const { updateUser } =useContext(UserContext);
   const navigate = useNavigate();
   const handleRegisterSubmit = async () => {
 
@@ -21,15 +21,17 @@ export default function  Register() {
         lastName,
         emailAddress,
         password,
+        userRole,
+        school
       },
       {
         withCredentials: true
       }
       );
-
+      console.log(userRole,school);
       if (response.status===201){
         const data = response.data;
-        // const loggedInUser = data.user;
+        const loggedInUser = data.newUser;
 
         console.log(data);
         console.log("Signup Success!");
@@ -41,8 +43,11 @@ export default function  Register() {
         setPassword('');
         setConfirmPassword('');
 
-        //navigate to login page
-        navigate('/login')
+        //Update user
+        updateUser(loggedInUser);
+
+        //navigate to dashboard 
+        navigate('/dashboard');
 
       } else {
 

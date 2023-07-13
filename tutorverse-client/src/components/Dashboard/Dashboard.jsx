@@ -1,28 +1,35 @@
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-import './StudentHome.css'
+import { useContext } from "react";
+import { UserContext } from "../../../../userContext";
+import StudentHome from '../StudentHome/StudentHome'
+import TutorHome from '../TutorHome/TutorHome'
+import './Dashboard.css'
 import { useEffect , useState } from "react";
  
-export default function StudentHome({
+export default function Dashboard({
     userInfo,
-    userRole
+    userRole,
+    userData
 }){
+    const { user, updateUser } = useContext(UserContext);
+    const navigate = useNavigate();
 
-    ///Replace with components for tutor view and student view
-    if (userRole==='tutor'){
+   
+    if (userInfo.userRole==='tutor'){
         return (
-        <div>
-            WELCOME, {userInfo.firstName} 
-            <p> This is your tutor dashboard</p> 
-        </div>
+            <div>
+
+                <div>{user.firstName}</div>
+                <TutorHome userInfo={userInfo} userRole={userRole}/>
+            </div>
+            
         )
     }
     else{
         return (
-            <div>
-                WELCOME, {userInfo.firstName} 
-                <p> This is your student dashboard</p> 
-            </div>
+            
+            <StudentHome userInfo={userInfo} userRole={userRole} />
         )
     }
     

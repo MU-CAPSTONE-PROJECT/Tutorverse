@@ -11,28 +11,29 @@ const jsonParser = bodyParser.json()
 //Endpoint to send new user data from signup
 router.post('/signup', async (req, res)  => {
     console.log(req.body);
-    const { userId, firstName, lastName, emailAddress, password } = req.body;
+    const { userId, firstName, lastName, emailAddress, password , userRole, school } = req.body;
     console.log(firstName);
   try {
 
     // Check if email already exists
     const existingUser = await User.findOne({
-        where: { emailAddress}
+        where: { emailAddress }
         
     });
 
     if (existingUser) {
         return res.status(400).json({ error: 'Email already exists' });
-      }
+    }
     
     //Password Encryption
     const hashedPassword = await bcrypt.hash(password, 10);
     
     //Create new user
-    const newUser = await User.create({id:userId, firstName, lastName, emailAddress, password: hashedPassword });
+    const newUser = await User.create({id:userId, firstName, lastName, emailAddress, password: hashedPassword , userRole, school});
 
     //Create session
     req.session.user = newUser;
+    // req.session.save();
 
     return res.status(201).json({ message: 'User created successfully', newUser});
 
@@ -65,6 +66,8 @@ router.post('/login', jsonParser, async  function (req, res) {
 
         //set cookie
         req.session.user = user;
+        // req.session.save();
+        console.log("Cookie set")
         return res.status(200).json({ message: 'User logged in successfully!', user });
         
 

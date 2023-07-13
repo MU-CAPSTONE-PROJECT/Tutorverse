@@ -66,7 +66,7 @@ export default function Login(){
             />
 
             <input 
-            type="text" 
+            type="password" 
             label="Password" 
             placeholder='password'
             id="login-password" 

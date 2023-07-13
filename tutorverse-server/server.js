@@ -1,3 +1,4 @@
+
 //imports
 const express = require('express');
 
@@ -27,7 +28,8 @@ const sessionStore = new SequelizeSession({
 //Middleware
 app.use(cors({
     origin: 'http://localhost:5173',
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST'],
   }));
 
 app.use(bodyParser.json({extended: false}));
@@ -63,24 +65,41 @@ async function TestConnection (){
 TestConnection();
 
 //Test endpoint
-app.get('/tutors', (req,res) => {
-    const userSession = req.session.user
-    console.log(userSession)
-    if(!userSession){
+app.get('/auth', (req,res) => {
+    try{
 
-        res.status(200).json({isLoggedIn: false})
+        const userSession = req.session.user
+        console.log(userSession)
+        if(!req.session.user){
 
-        return
+            return res.status(401).json({error:'Unauthorized'});
+        
+        } else{
+            return res.status(201).json({message:'User is logged in!', user: userSession});
+        }
+    
+    } catch(error){
+        res.status(500).json({ message: error.message });
+        console.log("Something went wrong!")
     }
-
-    res.json({message:'User is logged in!'});
+    
 });
+
+// Endpoint to update the user data in the cookie
+app.post('/updateUser', (req, res) => {
+    const userData = req.body;
+    
+    req.session.user = userData;
+    res.sendStatus(200);
+});
+
+
+
 
 //Endpoint for fetching US Universities list
 app.get('/pick_uni', (req,res) => {
     const userSession = req.session.user
     console.log(userSession)
-
     const fetchSchools = async () => {
         try {   
                 //third-party API fetch from Back4App website
