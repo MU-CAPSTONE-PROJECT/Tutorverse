@@ -1,16 +1,50 @@
-const { Sequelize } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 
+//New Sequelize instance
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: 'database/data.sqlite'
-  });
+    storage: './database/data.sqlite'
+});
 
-  async function TestConnection (){
-    try {
-        await sequelize.authenticate();
-        console.log('Connection has been established successfully.');
-    } catch (error) {
-        console.error('Unable to connect to the database:', error);
+const User = sequelize.define('Users',
+  {
+    id: {
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER
+    },
+    firstName : {
+      type: DataTypes.STRING,
+    },
+    lastName : {
+      type: DataTypes.STRING,
+      
+    },
+    emailAddress : {
+      type: DataTypes.STRING,
+      
+    },
+    password : {
+      type: DataTypes.STRING,
+      
+    },
+    userRole: {
+      type: DataTypes.STRING,
+    },
+    school: {
+      type: DataTypes.STRING,
     }
   }
-  TestConnection();
+  
+);
+
+(async () => {
+  try {
+    await sequelize.sync({ alter: true });
+    console.log('Database synchronized');
+  } catch (error) {
+    console.error('Error synchronizing database:', error);
+  }
+})();
+
+module.exports = { sequelize,User}

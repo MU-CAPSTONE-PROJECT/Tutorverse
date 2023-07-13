@@ -1,10 +1,22 @@
 import { Link } from 'react-router-dom';
-
+import { useState } from 'react';
 import './SelectRole.css'
 
 
 
-export default function SelectRole(){
+export default function SelectRole({
+    userRole,
+    setUserRole}){
+    
+
+    const setStudent = ()=>{
+        setUserRole('student')
+    };
+    const setTutor = () =>{
+        setUserRole('tutor')
+    };
+
+
     return(
     <div>
         <div className='navbar'>
@@ -13,8 +25,8 @@ export default function SelectRole(){
         <div>
             <div>Enter the Tutorverse</div>
             <div className='role-buttons'>
-                <button className='student-role-btn' >I am a student</button>
-                <button className='tutor-role-btn'> I am a tutor</button>
+                <button className='student-role-btn'  onClick={setStudent}>I am a student</button>
+                <button className='tutor-role-btn' onClick={setTutor}> I am a tutor</button>
             </div>
 
         </div>
