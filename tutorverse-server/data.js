@@ -6,7 +6,7 @@ const sequelize = new Sequelize({
     storage: './database/data.sqlite'
 });
 
-const User = sequelize.define('User',
+const User = sequelize.define('Users',
   {
     id: {
       autoIncrement: true,
@@ -27,9 +27,24 @@ const User = sequelize.define('User',
     password : {
       type: DataTypes.STRING,
       
+    },
+    userRole: {
+      type: DataTypes.STRING,
+    },
+    school: {
+      type: DataTypes.STRING,
     }
-    
   }
-)
+  
+);
+
+(async () => {
+  try {
+    await sequelize.sync({ alter: true });
+    console.log('Database synchronized');
+  } catch (error) {
+    console.error('Error synchronizing database:', error);
+  }
+})();
 
 module.exports = { sequelize,User}
