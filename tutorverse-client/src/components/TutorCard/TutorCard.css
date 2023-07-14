@@ -1,0 +1,12 @@
+.tutor-card {
+    display: flex;
+    flex-direction: row;
+    /* align-items: center; */
+    /* border: 1px solid #ccc; */
+    border-radius: 2px;
+    background: #2E2D2B;
+    width: 100%;
+    height: 350px; 
+    box-sizing: border-box; 
+    margin-bottom: 3px;
+  }
