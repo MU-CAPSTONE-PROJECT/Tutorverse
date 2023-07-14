@@ -1,0 +1,10 @@
+
+.tutor-list{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    margin: 0px;
+    background-color:#2E2D2B;
+    height:100%;
+}

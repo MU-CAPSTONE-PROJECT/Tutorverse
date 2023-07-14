@@ -1,14 +1,17 @@
-#root {
+/* #root {
   margin: 0 auto;
   text-align: center;
   background-color: #0A1526;
   width: 100%;
   height: 100%;
-}
+} */
 
-div.app{
+.app{
   width: 100%;
   height:100%;
+  display: flex;
+  background-color: #0A1526;
+
 }
 
 @media (prefers-reduced-motion: no-preference) {
