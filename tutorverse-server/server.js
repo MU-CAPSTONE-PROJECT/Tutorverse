@@ -17,6 +17,7 @@ const bodyParser = require('body-parser')
 const userRoutes = require('./routes/userRoutes');
 
 const SequelizeSessionInit = require('connect-session-sequelize');
+const { where } = require('sequelize');
 
 const SequelizeSession = SequelizeSessionInit(session.Store);
 const sessionStore = new SequelizeSession({
@@ -93,8 +94,30 @@ app.post('/updateUser', (req, res) => {
     res.sendStatus(200);
 });
 
+app.get('/tutors', async (req,res) =>{
+    console.log(req.session.user)
+    try{
 
-
+        const currUser = req.session.user;
+        const tutors = await User.findAll({where:{userRole:'tutor', school: currUser.school}})
+        console.log(tutors);
+        return res.status(200).json({list:tutors})
+    
+    } catch(error){
+        return res.status(404).json({message: error, list:null})
+    }
+    
+})
+app.get('/tutor/:tutorId', async (req, res) => {
+    const tutorId = parseInt(req.params.tutorId);
+    const tutor = await User.findOne({where:{id:tutorId}});
+    if (tutor) {
+        console.log(tutor)
+      res.status(200).json({ data: tutor });
+    } else {
+      res.status(404).json({ error: 'Tutor not found' });
+    }
+  });
 
 //Endpoint for fetching US Universities list
 app.get('/pick_uni', (req,res) => {
