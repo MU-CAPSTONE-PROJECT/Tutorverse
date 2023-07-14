@@ -11,6 +11,7 @@ import { BrowserRouter, Routes, Route , Navigate} from "react-router-dom";
 import { useEffect } from "react";
 import "./App.css";
 import { UserContext } from "../../../../userContext";
+import TutorView from "../../../TutorView/TutorView";
 
 
 export default function App() {
@@ -92,6 +93,7 @@ export default function App() {
             <Route path="/register" element={<Register school={school} userRole={userRole} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={ user ? <Dashboard userInfo={user} userRole={userRole}  /> :(<Navigate to='/login'/>)}/>
+            <Route path="/tutor/:tutorId" element={<TutorView />}/>
           </Routes>
         </BrowserRouter>
       </UserContext.Provider>
