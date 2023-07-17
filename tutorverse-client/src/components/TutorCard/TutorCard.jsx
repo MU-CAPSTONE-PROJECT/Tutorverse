@@ -13,13 +13,14 @@ export default function TutorCard ({tutor}){
         <div className="tutor-card">
             <Link to={`/tutor/${id}`}>
             
-                <div>
+                <div className="card-content">
                     <div className="left">
                         <div className="profile-img" >
                             <Avatar 
+                            className="avatar"
                                 alt="Profile Image" 
                                 src={imageUrl}
-                                sx={{ width: 80, height: 80 }}
+                                sx={{ width: 100, height: 100 }}
                                 />
                         </div>
                     </div>

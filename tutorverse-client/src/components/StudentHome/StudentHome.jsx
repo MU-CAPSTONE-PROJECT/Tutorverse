@@ -24,12 +24,23 @@ export default function StudentHome (){
     },[])
 
     return (
-        <div className='Student-Dash'>
+        <div className='student-dash'>
             <div className='student-nav'>
-                <div className='logo'>
-
+                <div className="left">
+                    <div className="logo">
+                        <img src="./src/assets/educate-svgrepo-com.svg" alt="" />
+                    </div>
+                    <div>Tutorverse</div>
                 </div>
-
+                <div className="right">
+                    <div>
+                        Login
+                    </div>
+                    <div>
+                        Menu
+                        Hamburger
+                    </div>
+                </div>
             </div>
             <div className='tutor-list'>
                 {tutors.map((tutor) =>(

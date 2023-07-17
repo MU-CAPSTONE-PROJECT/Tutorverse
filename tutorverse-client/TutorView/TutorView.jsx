@@ -58,7 +58,7 @@ export default function TutorView(){
                             <Avatar 
                                 alt="Profile Image" 
                                 src="tutorverse-client/src/assets/profile.jpg"
-                                sx={{ width: 80, height: 80 }}
+                                sx={{ width: 100, height: 100 }}
                             />
                         </div>
                         <div className='title'>
