@@ -29,7 +29,7 @@ router.post('/signup', async (req, res)  => {
     const hashedPassword = await bcrypt.hash(password, 10);
     
     //Create new user
-    const newUser = await User.create({id:userId, firstName, lastName, emailAddress, password: hashedPassword , userRole, school});
+    const newUser = await User.create({id:userId, firstName, lastName, emailAddress, password, userRole, school});// rem to save hashed password instead
 
     //Create session
     req.session.user = newUser;
@@ -58,10 +58,15 @@ router.post('/login', jsonParser, async  function (req, res) {
         }
 
         // Validate the password
-        const isValidPassword = await bcrypt.compare(password, user.password);
+        // const isValidPassword = await bcrypt.compare(password, user.password);
 
-        if (!isValidPassword) {
-        return res.status(401).json({ error: 'Invalid username or password' });
+
+        // if (!isValidPassword) {
+        // return res.status(401).json({ error: 'Invalid username or password' });
+        // }
+
+        if (!(password===user.password)) {
+          return res.status(401).json({ error: 'Invalid username or password' });
         }
 
         //set cookie

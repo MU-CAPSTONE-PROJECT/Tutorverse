@@ -14,13 +14,13 @@ export default function Dashboard({
 }){
     const { user, updateUser } = useContext(UserContext);
     const navigate = useNavigate();
-
+    console.log(user.firstName);
    
     if (userInfo.userRole==='tutor'){
         return (
             <div>
 
-                <div>{user.firstName}</div>
+                
                 <TutorHome userInfo={userInfo} userRole={userRole}/>
             </div>
             
@@ -28,8 +28,10 @@ export default function Dashboard({
     }
     else{
         return (
+            <div className="student-home">
+                <StudentHome userInfo={userInfo} userRole={userRole}/>
+            </div>
             
-            <StudentHome userInfo={userInfo} userRole={userRole} />
         )
     }
     

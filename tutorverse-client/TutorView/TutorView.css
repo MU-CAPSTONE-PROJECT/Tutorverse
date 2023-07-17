@@ -1,0 +1,38 @@
+.tutor-view{
+    width: 100%;
+}
+
+.tutor-details{
+
+    width: 100%;
+    height:100%;
+    background-color:#0A1526 ;
+}
+.title{
+    display:flex;
+    flex-direction: column;
+}
+.nav-bar{
+    display: flex;
+    justify-content: space-between;
+    height: 70px;
+
+}
+.nav-bar .left {
+    display: flex;
+    width:40%;
+}
+.nav-bar .right {
+    display: flex;
+    width: 50%;
+    justify-content: space-between;
+}
+.nav-bar .logo {
+    display: inline;
+}
+.nav-bar .logo img{
+    size: auto;
+    width: 30px;
+    height: 30px;
+    color: white;
+}

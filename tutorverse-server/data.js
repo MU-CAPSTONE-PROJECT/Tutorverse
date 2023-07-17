@@ -33,6 +33,12 @@ const User = sequelize.define('Users',
     },
     school: {
       type: DataTypes.STRING,
+    },
+    major: {
+      type: DataTypes.STRING,
+    },
+    imageUrl:{
+      type: DataTypes.STRING,
     }
   }
   
