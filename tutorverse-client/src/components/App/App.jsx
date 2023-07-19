@@ -1,36 +1,32 @@
-import * as React from "react";
 import LandingPage from "../Landing Page/LandingPage";
 import SelectRole from "../SelectRole/SelectRole";
 import SelectSchool from "../SelectSchool/SelectSchool";
 import Register from "../Register/Register";
-import axios from 'axios'
-import { useState,useContext } from "react";
+import axios from "axios";
+import { useState } from "react";
 import Login from "../Login/Login";
 import Dashboard from "../Dashboard/Dashboard";
-import { BrowserRouter, Routes, Route , Navigate} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import "./App.css";
 import { UserContext } from "../../../../userContext";
 import TutorView from "../../../TutorView/TutorView";
 
-
 export default function App() {
-  const [error, setError] = useState('');
-  const [schools, setSchools] = useState([]);  //State variable to store array of schools
+  const [schools, setSchools] = useState([]); //State variable to store array of schools
   const [isLoading, setIsLoading] = useState(true);
-  const [userRole, setUserRole] = useState('') //distinguish between tutor and student
+  const [userRole, setUserRole] = useState(""); //distinguish between tutor and student
   const [school, setSchool] = useState(null);
 
   const [user, setUser] = useState(() => {
-    try{
+    try {
       // Retrieve the user data from storage or set it to null if not found
-    const storedUser = localStorage.getItem('user');
-    return storedUser ? JSON.parse(storedUser) : null;
-    } catch(error){
-      console.log(error)
+      const storedUser = localStorage.getItem("user");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.log(error);
       return null;
     }
-    
   });
 
   const updateUser = (newUser) => {
@@ -39,66 +35,82 @@ export default function App() {
 
   useEffect(() => {
     // Save the user data to storage whenever the user state changes
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(user));
   }, [user]);
 
   useEffect(() => {
-
-
     let schoolsList;
-   
+
     const fetchSchools = async () => {
       try {
-          const response = await axios.get(
-            "http://localhost:3000/pick_uni",
-            {
-              withCredentials:true
-            }); //fetching schools list from server
+        const response = await axios.get("http://localhost:3000/pick_uni", {
+          withCredentials: true,
+        }); //fetching schools list from server
 
-          const data = response.data; 
-          schoolsList = data.results;
+        const data = response.data;
+        schoolsList = data.results;
 
-          //create an array of school names
-          const s = schoolsList.map((school) =>  //make it a set to prevent duplicates
-          school.name
-          )
-          setSchools(s);
-          setIsLoading(false);
-        
+        //create an array of school names
+        const s = schoolsList.map(
+          (
+            school, //make it a set to prevent duplicates
+          ) => school.name,
+        );
+        setSchools(s);
+        setIsLoading(false);
       } catch (error) {
-        setError('Sorry. No schools found')
         setIsLoading(false);
         console.log("Error:", error);
       }
     };
     fetchSchools();
-  },[]);
-
+  }, []);
 
   if (isLoading) {
     return <div>Loading...</div>; // Display a loading indicator while data is being fetched
-  }else{
-  return (
-    <div className="app">
-      <UserContext.Provider value = {{user, updateUser}}>
-
-        <BrowserRouter>
-          <Routes location={location} >
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/pick_role" element={<SelectRole 
-              userRole={userRole}  
-              setUserRole={setUserRole}
-            />} />
-            <Route path="/pick_school" element={<SelectSchool schools={schools}  school={school}  setSchool={setSchool}/>} />
-            <Route path="/register" element={<Register school={school} userRole={userRole} />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={ user ? <Dashboard userInfo={user} userRole={userRole}  /> :(<Navigate to='/login'/>)}/>
-            <Route path="/tutor/:tutorId" element={<TutorView />}/>
-          </Routes>
-        </BrowserRouter>
-      </UserContext.Provider>
-      
-    </div>
-  );
+  } else {
+    return (
+      <div className="app">
+        <UserContext.Provider value={{ user, updateUser }}>
+          <BrowserRouter>
+            <Routes location={location}>
+              <Route path="/" element={<LandingPage />} />
+              <Route
+                path="/pick_role"
+                element={
+                  <SelectRole userRole={userRole} setUserRole={setUserRole} />
+                }
+              />
+              <Route
+                path="/pick_school"
+                element={
+                  <SelectSchool
+                    schools={schools}
+                    school={school}
+                    setSchool={setSchool}
+                  />
+                }
+              />
+              <Route
+                path="/register"
+                element={<Register school={school} userRole={userRole} />}
+              />
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/dashboard"
+                element={
+                  user ? (
+                    <Dashboard userInfo={user} userRole={userRole} />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                }
+              />
+              <Route path="/tutor/:tutorId" element={<TutorView />} />
+            </Routes>
+          </BrowserRouter>
+        </UserContext.Provider>
+      </div>
+    );
+  }
 }
-};

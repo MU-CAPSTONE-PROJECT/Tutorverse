@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from 'react-router-dom';
-import Button from '@mui/material/Button';
+import { Link } from "react-router-dom";
+import Button from "@mui/material/Button";
 import "./LandingPage.css";
 
 export default function LandingPage() {
@@ -14,13 +14,8 @@ export default function LandingPage() {
           <div>Tutorverse</div>
         </div>
         <div className="right">
-          <div>
-            Login
-          </div>
-          <div>
-            Menu
-            Hamburger
-          </div>
+          <div>Login</div>
+          <div>Menu Hamburger</div>
         </div>
       </div>
       <div className="landing-body">
@@ -29,11 +24,10 @@ export default function LandingPage() {
         </div>
       </div>
       <div>
-        <Link to={'/pick_role'}>
+        <Link to={"/pick_role"}>
           {/* <button className="get-started-btn"> Get Started</button> */}
           <Button variant="contained">Get Started</Button>
         </Link>
-        
       </div>
     </div>
   );

@@ -1,11 +1,3 @@
-
-
-export default function TutorHome(){
-
-    return(
-
-        <div>
-            WELCOME TO YOUR TUTOR DASHBOARD!!!
-        </div>
-    )
+export default function TutorHome() {
+  return <div>WELCOME TO YOUR TUTOR DASHBOARD!!!</div>;
 }
