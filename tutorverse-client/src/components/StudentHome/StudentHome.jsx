@@ -9,6 +9,9 @@ import "./StudentHome.css";
 export default function StudentHome() {
   const { user } = useContext(UserContext);
   const [tutors, setTutors] = useState([]);
+  const [location, setLocation] = useState(null);
+
+
   useEffect(() => {
     const fetchTutors = async () => {
       const response = await axios.get("http://localhost:3000/tutors", {
@@ -19,6 +22,29 @@ export default function StudentHome() {
     };
     fetchTutors();
   }, []);
+
+  useEffect(()=> {
+    if (navigator.geolocation || location===null){
+        const fetchLocation = () =>{
+            navigator.geolocation.watchPosition(success, error);
+        }; 
+        fetchLocation();
+        
+    } else {
+        console.log("No Geolocation");
+    }
+  },[location])
+  console.log(location);
+  function success (position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    setLocation({latitude, longitude});
+    
+  }
+
+  function error(){
+    console.log("Failed to retrieve location data")
+  }
 
   return (
     <div className="student-dash">
