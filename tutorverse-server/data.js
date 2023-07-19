@@ -36,6 +36,12 @@ const User = sequelize.define("Users", {
   imageUrl: {
     type: DataTypes.STRING,
   },
+  latitude: {
+    type: DataTypes.DOUBLE,     
+  },
+  longitude: {
+    type: DataTypes.DOUBLE,
+  }
 });
 
 (async () => {

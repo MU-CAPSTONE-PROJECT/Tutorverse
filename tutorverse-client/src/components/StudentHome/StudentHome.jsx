@@ -11,7 +11,7 @@ export default function StudentHome() {
   const [tutors, setTutors] = useState([]);
   const [location, setLocation] = useState(null);
 
-
+    //GET request for tutorlist
   useEffect(() => {
     const fetchTutors = async () => {
       const response = await axios.get("http://localhost:3000/tutors", {
@@ -23,6 +23,7 @@ export default function StudentHome() {
     fetchTutors();
   }, []);
 
+  //Geolocation
   useEffect(()=> {
     if (navigator.geolocation || location===null){
         const fetchLocation = () =>{
@@ -35,6 +36,7 @@ export default function StudentHome() {
     }
   },[location])
   console.log(location);
+
   function success (position) {
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
@@ -45,6 +47,27 @@ export default function StudentHome() {
   function error(){
     console.log("Failed to retrieve location data")
   }
+
+  //POST request to save location data to database
+  const saveLocation = async ()=>{
+
+    try{
+        const response = await axios.post("http://localhost:3000/save/location",
+            {
+                location
+            }, {
+                withCredentials:true
+        })
+        console.log(response.data.message)
+    } catch (error){
+        console.log(error);
+    }
+  }; 
+  saveLocation();
+  
+
+
+
 
   return (
     <div className="student-dash">

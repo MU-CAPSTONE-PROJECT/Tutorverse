@@ -90,6 +90,28 @@ app.post("/updateUser", (req, res) => {
   res.sendStatus(200);
 });
 
+//Saving User Location in database
+app.post("/save/location", async (req, res) => {
+
+  try{
+    const userLocation = req.body;
+    const lat = userLocation.latitude;
+    const long = userLocation.longitude
+    const currUser = req.session.user;
+    const userId = currUser.id;
+    await User.update({latitude: lat, longitude:long}, {
+      where: { id: userId }
+    })
+    console.log(userLocation);
+    return res.status(200).json({message:"Location saved successfully!"})
+  }
+  catch (error) {
+    return res.status(400).json({message: "Failed to save location!"})
+  }
+  
+})
+
+//List of tutors
 app.get("/tutors", async (req, res) => {
   console.log(req.session.user);
   try {
@@ -103,6 +125,8 @@ app.get("/tutors", async (req, res) => {
     return res.status(404).json({ message: error, list: null });
   }
 });
+
+//Individual tutor
 app.get("/tutor/:tutorId", async (req, res) => {
   const tutorId = parseInt(req.params.tutorId);
   const tutor = await User.findOne({ where: { id: tutorId } });
@@ -146,4 +170,12 @@ app.listen(3000, function (err) {
   else console.log(err);
 });
 
+(async () => {
+  try {
+    await sequelize.sync({ alter: true });
+    console.log("Database synchronized");
+  } catch (error) {
+    console.error("Error synchronizing database:", error);
+  }
+})();
 module.exports = app;
