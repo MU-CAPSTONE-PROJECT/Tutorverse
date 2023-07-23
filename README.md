@@ -71,6 +71,14 @@ Finding a tutor on campus can be frustrating for students who need quick tutorin
 - [x] Individual tutor view component
 - [x] Handle navigation between tutor listview
 
+### WEEK 3 Tasks
+- [x] Live-location implementation research
+- [x] Update user model to save user location data
+- [x] Google Maps geolocation API
+- [x] MapView UI
+- [x] Add markers on map for each available tutors
+
+
 ## THIRD-PARTY APIS
 
 - List of US Universities: https://parseapi.back4app.com/classes/Usuniversitieslist_University?&order=name
