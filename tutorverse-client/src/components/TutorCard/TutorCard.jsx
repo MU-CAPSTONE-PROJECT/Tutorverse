@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 export default function TutorCard({ tutor }) {
   //destructing the tutor properties
-  const { id, firstName, lastName, emailAddress, major, school, imageUrl } =
+  const { id, firstName, lastName, major } =
     tutor;
 
   return (

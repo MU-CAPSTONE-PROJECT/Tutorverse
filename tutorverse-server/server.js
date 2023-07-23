@@ -94,14 +94,17 @@ app.post("/updateUser", (req, res) => {
 app.post("/save/location", async (req, res) => {
 
   try{
-    const userLocation = req.body;
+    const userLocation = req.body.location;
     const lat = userLocation.latitude;
     const long = userLocation.longitude
     const currUser = req.session.user;
     const userId = currUser.id;
-    await User.update({latitude: lat, longitude:long}, {
-      where: { id: userId }
+    console.log(userId)
+
+    const updatedRow = await User.update({latitude: lat, longitude:long}, {
+      where: { id: userId },
     })
+    console.log(updatedRow);
     console.log(userLocation);
     return res.status(200).json({message:"Location saved successfully!"})
   }
@@ -119,7 +122,6 @@ app.get("/tutors", async (req, res) => {
     const tutors = await User.findAll({
       where: { userRole: "tutor", school: currUser.school },
     });
-    console.log(tutors);
     return res.status(200).json({ list: tutors });
   } catch (error) {
     return res.status(404).json({ message: error, list: null });

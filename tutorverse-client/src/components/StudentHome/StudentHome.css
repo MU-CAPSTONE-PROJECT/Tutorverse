@@ -48,6 +48,8 @@
 
 .student-nav .right {
   display: flex;
+  width: 50%;
+  gap: 10px;
   align-items: center;
 }
 

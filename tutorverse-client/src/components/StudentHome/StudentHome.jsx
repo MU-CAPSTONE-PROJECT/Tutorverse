@@ -7,7 +7,7 @@ import MapView from "../MapView/MapView";
 import "./StudentHome.css";
 
 export default function StudentHome() {
-  const { user } = useContext(UserContext);
+  const { user, updateUser } = useContext(UserContext);
   const [tutors, setTutors] = useState([]);
   const [location, setLocation] = useState(null);
 
@@ -64,9 +64,9 @@ export default function StudentHome() {
     }
   }; 
   saveLocation();
-  
-
-
+  const handleLogout = () => {
+    updateUser(null);
+  };
 
 
   return (
@@ -79,7 +79,7 @@ export default function StudentHome() {
           <div>Tutorverse</div>
         </div>
         <div className="right">
-          <div>Login</div>
+          <button onClick={handleLogout} >Logout</button>
           <div>Menu Hamburger</div>
         </div>
       </div>
@@ -92,7 +92,7 @@ export default function StudentHome() {
           ))}
         </div>
         <div className="tutor-map">
-          <MapView />
+            <MapView tutors={tutors}/>
         </div>
       </div>
     </div>

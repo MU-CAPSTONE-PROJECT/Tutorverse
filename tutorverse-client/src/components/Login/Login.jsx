@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import React, { useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { UserContext } from "../../../../userContext";
 import "./Login.css";
 
@@ -22,14 +22,14 @@ export default function Login() {
           withCredentials: true,
         },
       );
-      console.log(response);
+      
       if (response.status === 200) {
         const data = response.data;
         const loggedInUser = data.user;
 
         //user context
         updateUser(loggedInUser);
-
+        
         //Navigate to home
         navigate("/dashboard");
         console.log("Login Success!");
@@ -37,6 +37,7 @@ export default function Login() {
         //Handle login failure
         alert("Login failed");
       }
+      console.log(response);
     } catch (error) {
       console.error(error);
       console.log("Login Failure!");
@@ -76,7 +77,7 @@ export default function Login() {
         </button>
         <div>
           <p>New User?</p>
-          <Link to="/register">
+          <Link to="/pick_role">
             <p>Register</p>
           </Link>
         </div>
