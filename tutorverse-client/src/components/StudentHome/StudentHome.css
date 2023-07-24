@@ -1,57 +1,70 @@
 .student-dash {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    background-color: #0A1526;
-    
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: #0a1526;
+
+  align-items: center;
+}
+
+.tutor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  width: 50%;
+  height: 100%;
+  background-color: #0a1526;
+  justify-content: center;
+  margin-top: 40px;
+}
+.tutor-map {
+  margin-top: 40px;
+  width: 50%;
+  height: auto;
+  border-radius: 5px;
+}
+.tutor-view {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.student-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 110px;
+  width: 100%;
+  background-color: #0a1526;
+  color: white;
+}
+
+.student-nav .left {
+  display: flex;
+  align-items: center;
+}
+
+.student-nav .right {
+  display: flex;
+  width: 50%;
+  gap: 10px;
+  align-items: center;
+}
+
+.student-nav .logo {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.student-nav .logo img {
+  width: 30px;
+  height: 30px;
+}
+
+@media (max-width: 768px) {
+  header {
+    font-size: 18px;
   }
-  
-  .tutor-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-    width: 50%;
-    height: 100%;
-    background-color: #0A1526;
-    justify-content: center;
-    margin-top: 40px;
-  }
-  
-  .student-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 110px;
-    width: 100%;
-    background-color: #0A1526;
-    color: white;
-  }
-  
-  .student-nav .left {
-    display: flex;
-    align-items: center;
-  }
-  
-  .student-nav .right {
-    display: flex;
-    align-items: center;
-  }
-  
-  .student-nav .logo {
-    display: inline-block;
-    margin-right: 10px;
-  }
-  
-  .student-nav .logo img {
-    width: 30px;
-    height: 30px;
-  }
-  @media (max-width: 768px) {
-    header {
-      font-size: 18px;
-    }
-  }
-  
+}
