@@ -10,7 +10,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import "./App.css";
 import { UserContext } from "../../../../userContext";
+import socketIO from 'socket.io-client';
 import TutorView from "../../../TutorView/TutorView";
+
+
+const socket = socketIO.connect('http://localhost:4000');
 
 export default function App() {
   const [schools, setSchools] = useState([]); //State variable to store array of schools
