@@ -1,8 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import TutorCard from "../TutorCard/TutorCard";
 import { useContext } from "react";
 import { UserContext } from "../../../../userContext";
+import Button from '@mui/material/Button';
+import SchoolIcon from '@mui/icons-material/School';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import MapView from "../MapView/MapView";
 import "./StudentHome.css";
 
@@ -10,6 +15,7 @@ export default function StudentHome() {
   const { user, updateUser } = useContext(UserContext);
   const [tutors, setTutors] = useState([]);
   const [location, setLocation] = useState(null);
+  const navigate = useNavigate();
 
     //GET request for tutorlist
   useEffect(() => {
@@ -41,7 +47,6 @@ export default function StudentHome() {
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
     setLocation({latitude, longitude});
-    
   }
 
   function error(){
@@ -68,19 +73,23 @@ export default function StudentHome() {
     updateUser(null);
   };
 
-
+  const chatBtnClick = () =>{
+    navigate('/chat')
+  }
+  
   return (
     <div className="student-dash">
       <div className="student-nav">
         <div className="left">
           <div className="logo">
-            <img src="./src/assets/educate-svgrepo-com.svg" alt="" />
+            <SchoolIcon />
           </div>
           <div>Tutorverse</div>
         </div>
         <div className="right">
-          <button onClick={handleLogout} >Logout</button>
-          <div>Menu Hamburger</div>
+          <ChatBubbleIcon onClick={chatBtnClick}/>
+          <Button variant="contained" onClick={handleLogout} >Logout</Button>
+          <MenuIcon/>
         </div>
       </div>
       <h3>Welcome, {user.firstName}</h3>
