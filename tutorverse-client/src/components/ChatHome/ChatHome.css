@@ -1,0 +1,49 @@
+.main{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+.chat-navbar{
+    width: 100%;
+    height: 70px;
+}
+.body{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: row;
+}
+.side-nav{
+    background-color: white;
+    width: 30%;
+    height: 100%;
+    border-right: 2px solid rgb(76, 75, 75);
+}
+.chat-window{
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    height: 100%;
+    color:black;
+    background-color: white;
+}
+.chat-body{
+    width: 100%;
+    height:95%;
+}
+.send-message{
+    display: flex;
+    flex-direction: row;
+    width:100%;
+    height:5%;
+}
+.message-input{
+    width: 90%;
+}
+.message-sent{
+    text-align: right;
+}
+.message-received{
+    text-align: left;
+}
