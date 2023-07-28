@@ -44,13 +44,31 @@ const User = sequelize.define("Users", {
   }
 });
 
-(async () => {
+const Message = sequelize.define('Messages', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+
+  },
+  senderId: {
+    type: DataTypes.INTEGER,
+  },
+  recepientId: {
+    type: DataTypes.INTEGER,
+  },
+  content: {
+    type: DataTypes.STRING,
+  },
+})
+
+async () => {
   try {
     await sequelize.sync({ alter: true });
     console.log("Database synchronized");
   } catch (error) {
     console.error("Error synchronizing database:", error);
   }
-})();
+};
 
-module.exports = { sequelize, User };
+module.exports = { sequelize, User, Message };
