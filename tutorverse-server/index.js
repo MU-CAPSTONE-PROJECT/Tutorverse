@@ -3,7 +3,7 @@ const app = express();
 const PORT = 4000;
 const http = require('http').Server(app);
 const cors = require('cors');
-const { User, sequelize } = require('./data.js');
+const { User, sequelize, Message } = require('./data.js');
 
 const socketIO = require('socket.io')(http, {
     cors: {
@@ -42,12 +42,17 @@ socketIO.on('connection', (socket) => {
   }
 
   //Incoming messages
-  socket.on('sendMessage',(message) => {
+  socket.on('sendMessage',async (message) => {
     const {fromId, toId, content} = message;
     console.log(message)
     const socketIDs = userSocketIds[toId]
-    console.log("Message sent!" ,content,toId)
-    console.log(socketIDs)
+    
+    await Message.create({
+      senderId: fromId,
+      recepientId: toId,
+      content: content
+    })
+
 
     if (socketIDs){
       socketIDs.forEach((socketId)=>{
