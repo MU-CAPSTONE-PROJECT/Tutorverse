@@ -11,7 +11,6 @@ import { useEffect } from "react";
 import "./App.css";
 import ChatHome from "../ChatHome/ChatHome";
 import { UserContext } from "../../../../userContext";
-
 import TutorView from "../../../TutorView/TutorView";
 
 export default function App() {
@@ -19,7 +18,6 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState(""); //distinguish between tutor and student
   const [school, setSchool] = useState(null);
-  
 
   const [user, setUser] = useState(() => {
     try {
@@ -36,14 +34,11 @@ export default function App() {
     setUser(newUser);
   };
 
-  
-
-
   useEffect(() => {
     // Save the user data to storage whenever the user state changes
     localStorage.setItem("user", JSON.stringify(user));
 
-    
+
 
   }, [user]);
 
