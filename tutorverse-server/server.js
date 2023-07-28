@@ -7,7 +7,7 @@ const session = require("express-session");
 
 const cors = require("cors");
 
-const { sequelize, User } = require("./data");
+const { sequelize, User ,Message} = require("./data");
 
 const fetch = require("node-fetch");
 
@@ -138,6 +138,33 @@ app.get("/tutor/:tutorId", async (req, res) => {
   } else {
     res.status(404).json({ error: "Tutor not found" });
   }
+});
+
+//Endpoint for retrieving messages from DB
+app.get('/messages', async (req, res) => {
+  console.log(req.body)
+  const id = req.body.id;
+  const { Op } = require ('sequelize');
+
+  try{
+
+    //retrieve all messages where user is either sender or recipient
+    const messages = await Message.findAll({where: 
+    
+    { [Op.or]: [
+      {senderId: id},
+      {recepientId: id}
+    ]
+  }
+  })
+  console.log(messages)
+  console.log("success!")
+  return res.status(200).json({data: messages})
+
+  } catch (error) {
+    console.log("Failed to save message ", error);
+    return res.status.apply(500).json({ error: "Internal server error"})
+  };
 });
 
 //Endpoint for fetching US Universities list
