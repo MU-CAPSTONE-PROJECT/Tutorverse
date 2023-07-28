@@ -1,5 +1,6 @@
-import { useParams } from "react-router-dom";
+import { useParams , useNavigate } from "react-router-dom";
 import { useState } from "react";
+import Button from '@mui/material/Button';
 import Avatar from "@mui/material/Avatar";
 import axios from "axios";
 import { useEffect } from "react";
@@ -9,6 +10,7 @@ import "./TutorView.css";
 export default function TutorView() {
   const [tutor, setTutor] = useState({});
   const { tutorId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTutor = async () => {
@@ -27,6 +29,11 @@ export default function TutorView() {
   });
 
   const { firstName, lastName, major } = tutor;
+
+
+  const handleMessageBtn =()=>{
+    navigate(`/chat/${tutorId}`);
+  }
 
   return (
     <div className="tutor-view">
@@ -58,9 +65,15 @@ export default function TutorView() {
                 {firstName} {lastName}
               </div>
               <div className="major-label">{major}</div>
+
             </div>
           </div>
         </div>
+      </div>
+      <div className="message-btn">
+        <Button onClick={handleMessageBtn}>
+          Message
+        </Button>
       </div>
     </div>
   );

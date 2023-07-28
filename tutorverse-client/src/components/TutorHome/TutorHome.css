@@ -1,4 +1,46 @@
-.tutor-list {
-  width: auto;
-  margin-left: 1px;
+.tutor-dash {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100%;
+  background-color: #0a1526;
+}
+
+
+.tutor-nav {
+  display: flex;
+  flex-direction:row;
+  height: 110px;
+  width: 100%;
+  background-color: #0a1526;
+  color: white;
+}
+
+.tutor-nav .left {
+  display: flex;
+  align-items: center;
+  width: 30%;
+}
+
+.tutor-nav .right {
+  display: flex;
+  width: 50%;
+  gap: 10px;
+  align-items: center;
+}
+
+.tutor-nav .logo {
+  /* display: inline-block; */
+  margin-right: 10px;
+}
+
+.tutor-nav .logo img {
+  width: 30px;
+  height: 30px;
+}
+
+@media (max-width: 768px) {
+  header {
+    font-size: 18px;
+  }
 }

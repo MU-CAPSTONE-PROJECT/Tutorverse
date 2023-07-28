@@ -10,7 +10,7 @@ export default function Dashboard() {
 
   if (user.userRole === "tutor") {
     return (
-      <div>
+      <div className="tutor-home">
         <TutorHome />
       </div>
     );
