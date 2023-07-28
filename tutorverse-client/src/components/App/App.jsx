@@ -11,7 +11,7 @@ import { useEffect } from "react";
 import "./App.css";
 import ChatHome from "../ChatHome/ChatHome";
 import { UserContext } from "../../../../userContext";
-import socketIO from 'socket.io-client';
+
 import TutorView from "../../../TutorView/TutorView";
 
 export default function App() {
@@ -19,7 +19,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState(""); //distinguish between tutor and student
   const [school, setSchool] = useState(null);
-  const [ socket, setSocket] = useState(null);
+  
 
   const [user, setUser] = useState(() => {
     try {
@@ -36,18 +36,14 @@ export default function App() {
     setUser(newUser);
   };
 
+  
+
+
   useEffect(() => {
     // Save the user data to storage whenever the user state changes
     localStorage.setItem("user", JSON.stringify(user));
 
-    if (user){
-      socketIO.auth = {userId: user.id}
-    console.log(user.id)
-
-    setSocket(socketIO.connect('http://localhost:4000',
-    {auth:{userId: user.id}}
-    ));
-    }
+    
 
   }, [user]);
 
@@ -120,8 +116,8 @@ export default function App() {
                 }
               />
               <Route path="/tutor/:tutorId" element={ user ? (<TutorView />) : (<Navigate to="/login" />)} />
-              <Route path="/chat" element= { user ? (<ChatHome socket={socket}/>):(<Navigate to="/login" />)}/>
-              <Route path="/chat/:tutorId" element = { user ? (<ChatHome  socket={socket}/>) : (<Navigate to="/login" />)}/>
+              <Route path="/chat" element= { user ? (<ChatHome user={user}/>):(<Navigate to="/login" />)}/>
+              <Route path="/chat/:tutorId" element = { user ? (<ChatHome user={user} />) : (<Navigate to="/login" />)}/>
             </Routes>
           </BrowserRouter>
         </UserContext.Provider>
