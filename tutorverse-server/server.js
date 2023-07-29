@@ -142,8 +142,8 @@ app.get("/tutor/:tutorId", async (req, res) => {
 
 //Endpoint for retrieving messages from DB
 app.get('/messages', async (req, res) => {
-  console.log(req.body)
-  const id = req.body.id;
+
+  const id = req.session.user.id;
   const { Op } = require ('sequelize');
 
   try{
@@ -157,9 +157,8 @@ app.get('/messages', async (req, res) => {
     ]
   }
   })
-  console.log(messages)
   console.log("success!")
-  return res.status(200).json({data: messages})
+  return res.status(200).json(messages)
 
   } catch (error) {
     console.log("Failed to save message ", error);
@@ -167,6 +166,35 @@ app.get('/messages', async (req, res) => {
   };
 });
 
+//Chatlist endpoint
+app.get("/chatlist", async (req,res) => {
+  if (req.session.user.userRole==="student"){
+    try {
+      const currUser = req.session.user;
+      const tutors = await User.findAll({
+        where: { userRole: "tutor", school: currUser.school },
+      });
+      return res.status(200).json(tutors);
+    } catch (error) {
+      return res.status(404).json({ message: error, list: null });
+    }
+  } else{
+    Message.findAll({ where: {recepientId: req.session.user.id}}).then(messages => {
+      const studentIDs = messages.map(message => message.senderId);
+      User.findAll({where: {id: studentIDs}})
+      .then(students => res.json(students))
+      .catch(error => {
+        console.error('Error fetching students:', error);
+        res.status(500).json({ error: "Internal server error"})
+      })
+      
+    
+  }).catch(error => {
+    console.error('Error fetching messages:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+    });
+}
+}) 
 //Endpoint for fetching US Universities list
 app.get("/pick_uni", (req, res) => {
   const userSession = req.session.user;

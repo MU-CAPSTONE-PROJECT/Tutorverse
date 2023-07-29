@@ -8,25 +8,40 @@ import socketIO from "socket.io-client";
 import "./ChatHome.css";
 
 export default function ChatHome({ user }) {
-  const [tutors, setTutors] = useState([]);
+  const [chats, setChats] = useState([]);
   const [messages, setMessages] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   const [socket, setSocket] = useState(null);
   const navigate = useNavigate();
 
-  //GET request for tutorlist
+  //Fetching chat list for both tutor and student user
   useEffect(() => {
-    const fetchTutors = async () => {
-      const response = await axios.get("http://localhost:3000/tutors", {
+    const fetchChats = async () => {
+      const response = await axios.get("http://localhost:3000/chatList",
+      {
         withCredentials: true,
-      });
-      setTutors(response.data.list);
-      console.log(response.data.list);
+      }
+      );
+      setChats(response.data)
     };
-    fetchTutors();
-  }, []);
+    fetchChats();
 
+  }, [newMessage])
+
+  useEffect( () => {
+    const fetchMessages = async () => {
+      const response = await axios.get("http://localhost:3000/messages",
+      {
+        withCredentials: true,
+      } 
+      );
+      
+      setMessages(response.data);
+    };
+    fetchMessages();
+  },[newMessage])
+  console.log(messages)
   const handleBackClick = () => {
     navigate("/dashboard");
   };
@@ -66,14 +81,6 @@ export default function ChatHome({ user }) {
           content: newMessage,
         });
         console.log(newMessage);
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            fromId: user.id,
-            content: newMessage,
-            timestamp: Date.now(),
-          },
-        ]);
 
         setNewMessage("");
       }
@@ -85,20 +92,11 @@ export default function ChatHome({ user }) {
           content: newMessage,
         });
         console.log(messages[0].fromId);
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            fromId: user.id,
-            content: newMessage,
-            timestamp: Date.now(),
-          },
-        ]);
 
         setNewMessage("");
       }
     }
   };
-  console.log(messages);
 
   const handleInputChange = (e) => {
     setNewMessage(e.target.value);
@@ -116,15 +114,13 @@ export default function ChatHome({ user }) {
       <div>CHATS</div>
       <div className="body">
         <div className="side-nav">
-          {user.userRole === "student" ? (
-            tutors.map((tutor) => (
-              <div key={tutor.id} onClick={() => setSelectedUser(tutor)}>
-                {tutor.firstName}
+          {
+            chats.map((chat) => (
+              <div key={chat.id} onClick={() => setSelectedUser(chat)}>
+                {chat.firstName}
               </div>
             ))
-          ) : (
-            <div></div>
-          )}
+          }
         </div>
         <div className="chat-window">
           <div className="chat-body">
@@ -132,7 +128,7 @@ export default function ChatHome({ user }) {
               <div
                 key={index}
                 className={`message-${
-                  msg.fromId === user.id ? "sent" : "received"
+                  msg.recepientId === user.id ? "sent" : "received"
                 }`}
               >
                 <p>{msg.content}</p>
