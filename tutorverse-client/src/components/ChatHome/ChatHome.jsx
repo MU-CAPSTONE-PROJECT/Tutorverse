@@ -18,7 +18,7 @@ export default function ChatHome({ user }) {
   //Fetching chat list for both tutor and student user
   useEffect(() => {
     const fetchChats = async () => {
-      const response = await axios.get("http://localhost:3000/chatList",
+      const response = await axios.get("http://localhost:3000/chatlist",
       {
         withCredentials: true,
       }
@@ -26,8 +26,9 @@ export default function ChatHome({ user }) {
       setChats(response.data)
     };
     fetchChats();
+    console.log(chats)
 
-  }, [newMessage])
+  }, [])
 
   useEffect( () => {
     const fetchMessages = async () => {
@@ -36,12 +37,11 @@ export default function ChatHome({ user }) {
         withCredentials: true,
       } 
       );
-      
       setMessages(response.data);
     };
     fetchMessages();
   },[newMessage])
-  console.log(messages)
+
   const handleBackClick = () => {
     navigate("/dashboard");
   };
@@ -88,10 +88,9 @@ export default function ChatHome({ user }) {
       if (messages && newMessage) {
         socket.emit("sendMessage", {
           fromId: user.id,
-          toId: messages[0].fromId,
+          toId: messages[0].senderId,
           content: newMessage,
         });
-        console.log(messages[0].fromId);
 
         setNewMessage("");
       }
@@ -102,7 +101,6 @@ export default function ChatHome({ user }) {
     setNewMessage(e.target.value);
   };
 
-  console.log(selectedUser);
 
   return (
     <div className="main">
@@ -128,7 +126,7 @@ export default function ChatHome({ user }) {
               <div
                 key={index}
                 className={`message-${
-                  msg.recepientId === user.id ? "sent" : "received"
+                  msg.senderId === user.id ? "sent" : "received"
                 }`}
               >
                 <p>{msg.content}</p>
