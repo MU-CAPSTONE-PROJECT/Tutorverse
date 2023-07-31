@@ -7,7 +7,7 @@ const session = require("express-session");
 
 const cors = require("cors");
 
-const { sequelize, User ,Message} = require("./data");
+const { sequelize, User , Message, Rating} = require("./data");
 
 const fetch = require("node-fetch");
 
@@ -221,6 +221,48 @@ app.get("/pick_uni", (req, res) => {
   };
   fetchSchools();
 });
+
+//Save new tutor ratings to db
+app.get("/ratings", async (req,res) =>{
+  const studentId = req.session.user.id;
+  const tutorId = req.body.tutorId;
+  const rating = req.body.rating;
+  try{
+    await Rating.update({studentId: studentId, tutorId: tutorId, rating: rating})
+    return res.status(200).json({message: "Rating saved successfully"})
+  } 
+  catch(error){
+    console.log(error)
+    return res.status(200).json({message: "Internal server error. Failed to save rating"})
+  }
+ 
+})
+
+//Calculate average tutor rating
+app.get("/avg_rating",async (req,res)=> {
+
+  const tutorId = req.body.tutorId;
+  try {
+    const result = await Rating.findOne({where: {tutorId: tutorId}},
+      {attributes: [sequelize.fn("AVG", sequelize.col("rating"))],
+      raw: true
+      }
+    )
+    let avgRating;
+    if(result.dataValues.rating ===null){
+      avgRating = 0;
+    } else{
+      avgRating = result.dataValues.rating;
+    }
+    
+    return res.status(200).json(avgRating)
+
+  } catch(error){
+    return res.status(400).json({message: "Failed to retrieve rating"})
+    console.log(error)
+  }
+
+})
 
 app.listen(3000, function (err) {
   if (!err) console.log("Server is running!");

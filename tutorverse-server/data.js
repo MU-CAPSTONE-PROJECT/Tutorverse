@@ -1,5 +1,4 @@
 const { Sequelize, DataTypes } = require("sequelize");
-const { default: TutorView } = require("../tutorverse-client/TutorView/TutorView");
 
 //New Sequelize instance
 const sequelize = new Sequelize({
@@ -42,7 +41,10 @@ const User = sequelize.define("Users", {
   },
   longitude: {
     type: DataTypes.DOUBLE,
-  }
+  },
+  rating: {
+    type: DataTypes.DOUBLE,
+  },
 });
 
 const Message = sequelize.define('Messages', {
@@ -91,4 +93,4 @@ async () => {
   }
 };
 
-module.exports = { sequelize, User, Message };
+module.exports = { sequelize, User, Message, Rating };
