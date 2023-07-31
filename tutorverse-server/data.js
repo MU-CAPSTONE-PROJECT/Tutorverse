@@ -1,4 +1,5 @@
 const { Sequelize, DataTypes } = require("sequelize");
+const { default: TutorView } = require("../tutorverse-client/TutorView/TutorView");
 
 //New Sequelize instance
 const sequelize = new Sequelize({
@@ -60,6 +61,25 @@ const Message = sequelize.define('Messages', {
   content: {
     type: DataTypes.STRING,
   },
+});
+
+const Rating = sequelize.define('Ratings', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  studentId: {
+    type: DataTypes.INTEGER,
+
+  },
+  tutorId: {
+    type: DataTypes.INTEGER,
+  },
+  rating: {
+    type: DataTypes.DOUBLE,
+  },
+
 })
 
 async () => {
