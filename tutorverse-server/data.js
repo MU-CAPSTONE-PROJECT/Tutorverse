@@ -45,6 +45,13 @@ const User = sequelize.define("Users", {
   rating: {
     type: DataTypes.DOUBLE,
   },
+  coursesTaken: {
+    type: DataTypes.STRING,
+  },
+  coursesOffered: {
+    type: DataTypes.STRING,
+  },
+
 });
 
 const Message = sequelize.define('Messages', {

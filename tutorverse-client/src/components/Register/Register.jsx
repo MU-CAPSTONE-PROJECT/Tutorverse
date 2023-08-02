@@ -4,7 +4,7 @@ import axios from "axios";
 import { UserContext } from "../../../../userContext";
 import "./Register.css";
 
-export default function Register({ school, userRole }) {
+export default function Register({ school, userRole, coursesTaken, coursesOffered }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [emailAddress, setEmail] = useState("");
@@ -24,6 +24,8 @@ export default function Register({ school, userRole }) {
           password,
           userRole,
           school,
+          coursesTaken,
+          coursesOffered
         },
         {
           withCredentials: true,

@@ -1,13 +1,25 @@
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./SelectRole.css";
 
 export default function SelectRole({ userRole, setUserRole }) {
+
+  const navigate = useNavigate()
+
   const setStudent = () => {
     setUserRole("student");
   };
   const setTutor = () => {
     setUserRole("tutor");
+  };
+
+  const handleClick = () => {
+    if(userRole==="student"){
+      navigate('/pick_school')
+    } else if(userRole==="tutor"){
+      navigate('/courses_taken')
+    } else{
+      alert("Please select your role!")
+    }
   };
 
   return (
@@ -26,10 +38,8 @@ export default function SelectRole({ userRole, setUserRole }) {
         </div>
       </div>
       <div className="join-now">
-        Let's find you a cool tutor
-        <Link to={"/pick_school"}>
-          <button> Join now</button>
-        </Link>
+          Let's find you a cool tutor
+          <button onClick={handleClick}> Next </button>
       </div>
     </div>
   );

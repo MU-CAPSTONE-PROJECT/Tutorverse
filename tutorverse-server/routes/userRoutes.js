@@ -19,6 +19,8 @@ router.post("/signup", async (req, res) => {
     password,
     userRole,
     school,
+    coursesTaken,
+    coursesOffered,
   } = req.body;
   console.log(firstName);
   try {
@@ -43,6 +45,8 @@ router.post("/signup", async (req, res) => {
       password,
       userRole,
       school,
+      coursesTaken,
+      coursesOffered,
     }); // rem to save hashed password instead
 
     //Create session
