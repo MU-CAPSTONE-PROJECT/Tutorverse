@@ -9,6 +9,8 @@ const cors = require("cors");
 
 const { sequelize, User , Message, Rating} = require("./data");
 
+const { Op } = require ('sequelize');
+
 const fetch = require("node-fetch");
 
 const bodyParser = require("body-parser");
@@ -126,6 +128,48 @@ app.get("/tutors", async (req, res) => {
   }
 });
 
+//Recommended Tutor API
+app.get("/tutors/recommended", async(req,res) =>{
+
+  //Use req.body.user.session
+
+  studentId = req.body.id;
+  const tutorsInteractedWithIds = [];
+  //Find IDS of all tutors student sent message to
+  const tutorsMessagedIds = await Message.findAll(
+    {where:{senderId: studentId},
+    attributes: [
+      [sequelize.fn('DISTINCT',sequelize.col('recepientId')),'uniqueId']]
+  })
+  console.log(tutorsMessagedIds[0].getDataValue("uniqueId"))
+  
+  tutorsMessagedIds.forEach(tutor =>
+    tutorsInteractedWithIds.push(tutor.getDataValue('uniqueId'))
+  )
+  
+  //Find IDs of all tutors students rated
+  const tutorsRatedIds = await Rating.findAll(
+    {where:{studentId},
+      attributes: [
+      [sequelize.fn('DISTINCT',sequelize.col('tutorId')),'uniqueId']]
+    }
+  )
+  tutorsRatedIds.forEach((tutor) => 
+    tutorsInteractedWithIds.push(tutor.getDataValue('uniqueId'))
+  )
+  const tutorIdsSet = new Set()
+
+  tutorsInteractedWithIds.forEach(id =>{
+    tutorIdsSet.add(id)
+  })
+  console.log(tutorIdsSet)
+  
+  return res.json(tutorIdsSet)
+
+})
+
+
+
 //Individual tutor
 app.get("/tutor/:tutorId", async (req, res) => {
   const tutorId = parseInt(req.params.tutorId);
@@ -142,7 +186,6 @@ app.get("/tutor/:tutorId", async (req, res) => {
 app.get('/messages', async (req, res) => {
 
   const id = req.session.user.id;
-  const { Op } = require ('sequelize');
 
   try{
 
