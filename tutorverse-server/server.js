@@ -7,7 +7,7 @@ const session = require("express-session");
 
 const cors = require("cors");
 
-const { sequelize, User } = require("./data");
+const { sequelize, User , Message, Rating} = require("./data");
 
 const fetch = require("node-fetch");
 
@@ -16,12 +16,10 @@ const bodyParser = require("body-parser");
 const userRoutes = require("./routes/userRoutes");
 
 const SequelizeSessionInit = require("connect-session-sequelize");
-const { where } = require("sequelize");
 
 const SequelizeSession = SequelizeSessionInit(session.Store);
 const sessionStore = new SequelizeSession({
-  db: sequelize,
-  //   table: User,
+  db: sequelize
 });
 
 //Middleware
@@ -33,7 +31,7 @@ app.use(
   }),
 );
 
-app.use(bodyParser.json({ extended: false }));
+app.use(bodyParser.json());
 
 //Session
 app.use(
@@ -133,13 +131,68 @@ app.get("/tutor/:tutorId", async (req, res) => {
   const tutorId = parseInt(req.params.tutorId);
   const tutor = await User.findOne({ where: { id: tutorId } });
   if (tutor) {
-    console.log(tutor);
+    
     res.status(200).json({ data: tutor });
   } else {
     res.status(404).json({ error: "Tutor not found" });
   }
 });
 
+//Endpoint for retrieving messages from DB
+app.get('/messages', async (req, res) => {
+
+  const id = req.session.user.id;
+  const { Op } = require ('sequelize');
+
+  try{
+
+    //retrieve all messages where user is either sender or recipient
+    const messages = await Message.findAll({where: 
+    
+    { [Op.or]: [
+      {senderId: id},
+      {recepientId: id}
+    ]
+  }
+  })
+  console.log("success!")
+  return res.status(200).json(messages)
+
+  } catch (error) {
+    console.log("Failed to save message ", error);
+    return res.status.apply(500).json({ error: "Internal server error"})
+  };
+});
+
+//Chatlist endpoint
+app.get("/chatlist", async (req,res) => {
+  if (req.session.user.userRole==="student"){
+    try {
+      const currUser = req.session.user;
+      const tutors = await User.findAll({
+        where: { userRole: "tutor", school: currUser.school },
+      });
+      return res.status(200).json(tutors);
+    } catch (error) {
+      return res.status(404).json({ message: error, list: null });
+    }
+  } else{
+    Message.findAll({ where: {recepientId: req.session.user.id}}).then(messages => {
+      const studentIDs = messages.map(message => message.senderId);
+      User.findAll({where: {id: studentIDs}})
+      .then(students => res.json(students))
+      .catch(error => {
+        console.error('Error fetching students:', error);
+        res.status(500).json({ error: "Internal server error"})
+      })
+      
+    
+  }).catch(error => {
+    console.error('Error fetching messages:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+    });
+}
+}) 
 //Endpoint for fetching US Universities list
 app.get("/pick_uni", (req, res) => {
   const userSession = req.session.user;
@@ -166,6 +219,60 @@ app.get("/pick_uni", (req, res) => {
   };
   fetchSchools();
 });
+
+async function updateTutorRating(tutorId) {
+  try {
+    const result = await Rating.findOne({
+      where: { tutorId },
+      attributes: [
+        [sequelize.fn("AVG", sequelize.col("rating")), "averageRating"],
+      ],
+      raw: true,
+    });
+
+    const avgRating = result.averageRating || 0;
+
+    await User.update(
+      { rating: avgRating },
+      { where: { id: tutorId } }
+    );
+
+    console.log(`Tutor rating updated for ID: ${tutorId}`);
+  } catch (error) {
+    console.error("Failed to update tutor rating:", error);
+  }
+}
+
+//Save new tutor ratings to db
+app.post("/ratings", async (req,res) =>{
+  const { studentId, tutorId, rating } = req.body;
+
+  try{
+    const existingRating = await Rating.findOne({where:{studentId, tutorId}})
+    if(existingRating===null){
+      const newRating = await Rating.create({
+        studentId, 
+        tutorId, 
+        rating
+      });
+      console.log(newRating)
+      await updateTutorRating(tutorId);
+      return res.status(200).json({message: "Rating saved successfully"});
+
+    } else{
+
+        //Update existing entry
+        await Rating.update({rating}, {where: {studentId, tutorId}});
+        await updateTutorRating(tutorId);
+      return res.status(200).json({ message: "Rating updated successfully" });
+    }
+  } 
+  catch(error){
+    console.log(error, "Failed to update or save tutor rating")
+    return res.status(200).json({message: "Internal server error. Failed to save rating"})
+  }
+
+})
 
 app.listen(3000, function (err) {
   if (!err) console.log("Server is running!");

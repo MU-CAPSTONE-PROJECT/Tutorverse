@@ -41,16 +41,63 @@ const User = sequelize.define("Users", {
   },
   longitude: {
     type: DataTypes.DOUBLE,
-  }
+  },
+  rating: {
+    type: DataTypes.DOUBLE,
+  },
+  coursesTaken: {
+    type: DataTypes.STRING,
+  },
+  coursesOffered: {
+    type: DataTypes.STRING,
+  },
+
 });
 
-(async () => {
+const Message = sequelize.define('Messages', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+
+  },
+  senderId: {
+    type: DataTypes.INTEGER,
+  },
+  recepientId: {
+    type: DataTypes.INTEGER,
+  },
+  content: {
+    type: DataTypes.STRING,
+  },
+});
+
+const Rating = sequelize.define('Ratings', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  studentId: {
+    type: DataTypes.INTEGER,
+
+  },
+  tutorId: {
+    type: DataTypes.INTEGER,
+  },
+  rating: {
+    type: DataTypes.DOUBLE,
+  },
+
+})
+
+async () => {
   try {
     await sequelize.sync({ alter: true });
     console.log("Database synchronized");
   } catch (error) {
     console.error("Error synchronizing database:", error);
   }
-})();
+};
 
-module.exports = { sequelize, User };
+module.exports = { sequelize, User, Message, Rating };
