@@ -41,7 +41,10 @@ const User = sequelize.define("Users", {
   },
   longitude: {
     type: DataTypes.DOUBLE,
-  }
+  },
+  rating: {
+    type: DataTypes.DOUBLE,
+  },
 });
 
 const Message = sequelize.define('Messages', {
@@ -60,6 +63,25 @@ const Message = sequelize.define('Messages', {
   content: {
     type: DataTypes.STRING,
   },
+});
+
+const Rating = sequelize.define('Ratings', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  studentId: {
+    type: DataTypes.INTEGER,
+
+  },
+  tutorId: {
+    type: DataTypes.INTEGER,
+  },
+  rating: {
+    type: DataTypes.DOUBLE,
+  },
+
 })
 
 async () => {
@@ -71,4 +93,4 @@ async () => {
   }
 };
 
-module.exports = { sequelize, User, Message };
+module.exports = { sequelize, User, Message, Rating };

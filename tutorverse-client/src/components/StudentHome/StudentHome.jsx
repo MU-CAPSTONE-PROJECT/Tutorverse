@@ -53,6 +53,24 @@ export default function StudentHome() {
     console.log("Failed to retrieve location data")
   }
 
+  //Get tutor rating
+  const getRating = async (tutorId) => {
+
+    try {
+      const response = await axios.get("http://localhost:3000/avg_rating",
+      {
+        tutorId
+      })
+      return (response.data)
+    }
+    catch (error){
+      
+      console.log(error)
+      return null;
+    }
+  }
+
+
   //POST request to save location data to database
   const saveLocation = async ()=>{
 
@@ -97,7 +115,7 @@ export default function StudentHome() {
       <div className="tutor-view">
         <div className="tutor-list">
           {tutors.map((tutor) => (
-            <TutorCard key={tutor.id} tutor={tutor} />
+            <TutorCard key={tutor.id} tutor={tutor} getRating= {getRating}/>
           ))}
         </div>
         <div className="tutor-map">
