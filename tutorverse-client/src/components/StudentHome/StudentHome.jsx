@@ -14,8 +14,17 @@ import "./StudentHome.css";
 export default function StudentHome() {
   const { user, updateUser } = useContext(UserContext);
   const [tutors, setTutors] = useState([]);
-  const [location, setLocation] = useState(null);
-  const navigate = useNavigate();
+
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date());
+    }, 180000);
+
+    return () => clearInterval(interval);
+  }, []);
+
 
     //GET request for tutorlist
   useEffect(() => {
@@ -27,66 +36,11 @@ export default function StudentHome() {
       console.log(response.data.list);
     };
     fetchTutors();
-  }, []);
 
-  //Geolocation
-  useEffect(()=> {
-    if (navigator.geolocation || location===null){
-        const fetchLocation = () =>{
-            navigator.geolocation.watchPosition(success, error);
-        }; 
-        fetchLocation();
-        
-    } else {
-        console.log("No Geolocation");
-    }
-  },[location])
-  console.log(location);
-
-  function success (position) {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
-    setLocation({latitude, longitude});
-  }
-
-  function error(){
-    console.log("Failed to retrieve location data")
-  }
-
-  //Get tutor rating
-  const getRating = async (tutorId) => {
-
-    try {
-      const response = await axios.get("http://localhost:3000/avg_rating",
-      {
-        tutorId
-      })
-      return (response.data)
-    }
-    catch (error){
-      
-      console.log(error)
-      return null;
-    }
-  }
+  }, [time]);
 
 
-  //POST request to save location data to database
-  const saveLocation = async ()=>{
-
-    try{
-        const response = await axios.post("http://localhost:3000/save/location",
-            {
-                location
-            }, {
-                withCredentials:true
-        })
-        console.log(response.data.message)
-    } catch (error){
-        console.log(error);
-    }
-  }; 
-  saveLocation();
+ 
   const handleLogout = () => {
     updateUser(null);
   };
