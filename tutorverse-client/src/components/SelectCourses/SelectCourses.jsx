@@ -1,13 +1,13 @@
-import { useState } from 'react';
-
 import './SelectCourses.css'
 import Select from "@mui/material/Select";
+import { useState } from 'react';
 import MenuItem from "@mui/material/MenuItem";
-import { Box, Chip , OutlinedInput, FormControl, InputLabel} from '@mui/material';
+import { Box, Chip , OutlinedInput, FormControl, InputLabel, Button} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 
-export default function SelectCourses(){
-
+export default function SelectCourses({setCoursesTaken}){
+    const navigate = useNavigate();
     const [selectedCourses, setSelectedCourses] = useState([]);
 
     const availableCourses = [
@@ -203,6 +203,18 @@ export default function SelectCourses(){
     const handleCourseChange = (event) => {
         setSelectedCourses(event.target.value);
     };
+    console.log(selectedCourses)
+    const handleNextBtn = async () => {
+        if(!(selectedCourses.length===0)){
+            setCoursesTaken(selectedCourses)
+            navigate('/tutor_subjects')
+        }
+        else if(selectedCourses.length===0){
+            alert("Please select course(s)")
+        }
+        
+        
+    }
     
     return (
     <div>
@@ -233,6 +245,10 @@ export default function SelectCourses(){
         </FormControl>
         
         </div>
+
+        <Button onClick={handleNextBtn}>
+            Next
+        </Button>
     </div>
     );
 }
