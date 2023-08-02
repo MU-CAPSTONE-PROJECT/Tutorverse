@@ -44,7 +44,7 @@ export default function TutorSubjects({setCoursesOffered}){
     const handleNextBtn = async () => {
         if(!(selectedSubjects.length===0)){
             setCoursesOffered(selectedSubjects)
-            navigate('/register')
+            navigate('/create_schedule')
         }
         else if(selectedSubjects.length===0){
             alert("Please make a selection")

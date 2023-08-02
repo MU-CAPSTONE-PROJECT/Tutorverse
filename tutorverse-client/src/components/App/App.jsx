@@ -14,6 +14,7 @@ import { UserContext } from "../../../../userContext";
 import TutorView from "../../../TutorView/TutorView";
 import SelectCourses from "../SelectCourses/SelectCourses";
 import TutorSubjects from "../TutorSubjects/TutorSubjects";
+import TutorSchedule from "../TutorSchedule/TutorSchedule";
 
 export default function App() {
   const [schools, setSchools] = useState([]); //State variable to store array of schools
@@ -43,6 +44,16 @@ export default function App() {
     localStorage.setItem("user", JSON.stringify(user));
 
   }, [user]);
+
+  const [schedule, setSchedule] = useState({
+    Monday: [],
+    Tuesday: [],
+    Wednesday: [],
+    Thursday: [],
+    Friday: [],
+    Saturday: [],
+    Sunday: [],
+  });
 
   useEffect(() => {
     let schoolsList;
@@ -99,7 +110,7 @@ export default function App() {
               />
               <Route
                 path="/register"
-                element={<Register school={school} userRole={userRole} coursesTaken={coursesTaken} coursesOffered={coursesOffered}/>}
+                element={<Register school={school} userRole={userRole} coursesTaken={coursesTaken} coursesOffered={coursesOffered} schedule={schedule}/>}
               />
               <Route path="/login" element={<Login />} />
               <Route
@@ -117,6 +128,7 @@ export default function App() {
               <Route path="/chat/:tutorId" element = { user ? (<ChatHome user={user} />) : (<Navigate to="/login" />)}/>
               <Route path="/courses_taken" element = {<SelectCourses setCoursesTaken ={setCoursesTaken}/>}/>
               <Route path="/tutor_subjects" element={<TutorSubjects setCoursesOffered={setCoursesOffered} />}/>
+              <Route path="/create_schedule" element={<TutorSchedule schedule={schedule} setSchedule={setSchedule}/>}/>
             </Routes>
           </BrowserRouter>
         </UserContext.Provider>
