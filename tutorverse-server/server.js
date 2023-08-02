@@ -16,12 +16,10 @@ const bodyParser = require("body-parser");
 const userRoutes = require("./routes/userRoutes");
 
 const SequelizeSessionInit = require("connect-session-sequelize");
-const { where } = require("sequelize");
 
 const SequelizeSession = SequelizeSessionInit(session.Store);
 const sessionStore = new SequelizeSession({
-  db: sequelize,
-  //   table: User,
+  db: sequelize
 });
 
 //Middleware
@@ -33,7 +31,7 @@ app.use(
   }),
 );
 
-app.use(bodyParser.json({ extended: false }));
+app.use(bodyParser.json());
 
 //Session
 app.use(
@@ -133,7 +131,7 @@ app.get("/tutor/:tutorId", async (req, res) => {
   const tutorId = parseInt(req.params.tutorId);
   const tutor = await User.findOne({ where: { id: tutorId } });
   if (tutor) {
-    console.log(tutor);
+    
     res.status(200).json({ data: tutor });
   } else {
     res.status(404).json({ error: "Tutor not found" });
@@ -222,44 +220,56 @@ app.get("/pick_uni", (req, res) => {
   fetchSchools();
 });
 
+async function updateTutorRating(tutorId) {
+  try {
+    const result = await Rating.findOne({
+      where: { tutorId },
+      attributes: [
+        [sequelize.fn("AVG", sequelize.col("rating")), "averageRating"],
+      ],
+      raw: true,
+    });
+
+    const avgRating = result.averageRating || 0;
+
+    await User.update(
+      { rating: avgRating },
+      { where: { id: tutorId } }
+    );
+
+    console.log(`Tutor rating updated for ID: ${tutorId}`);
+  } catch (error) {
+    console.error("Failed to update tutor rating:", error);
+  }
+}
+
 //Save new tutor ratings to db
-app.get("/ratings", async (req,res) =>{
-  const studentId = req.session.user.id;
-  const tutorId = req.body.tutorId;
-  const rating = req.body.rating;
+app.post("/ratings", async (req,res) =>{
+  const { studentId, tutorId, rating } = req.body;
+
   try{
-    await Rating.update({studentId: studentId, tutorId: tutorId, rating: rating})
-    return res.status(200).json({message: "Rating saved successfully"})
+    const existingRating = await Rating.findOne({where:{studentId, tutorId}})
+    if(existingRating===null){
+      const newRating = await Rating.create({
+        studentId, 
+        tutorId, 
+        rating
+      });
+      console.log(newRating)
+      await updateTutorRating(tutorId);
+      return res.status(200).json({message: "Rating saved successfully"});
+
+    } else{
+
+        //Update existing entry
+        await Rating.update({rating}, {where: {studentId, tutorId}});
+        await updateTutorRating(tutorId);
+      return res.status(200).json({ message: "Rating updated successfully" });
+    }
   } 
   catch(error){
-    console.log(error)
+    console.log(error, "Failed to update or save tutor rating")
     return res.status(200).json({message: "Internal server error. Failed to save rating"})
-  }
- 
-})
-
-//Calculate average tutor rating
-app.get("/avg_rating",async (req,res)=> {
-
-  const tutorId = req.body.tutorId;
-  try {
-    const result = await Rating.findOne({where: {tutorId: tutorId}},
-      {attributes: [sequelize.fn("AVG", sequelize.col("rating"))],
-      raw: true
-      }
-    )
-    let avgRating;
-    if(result.dataValues.rating ===null){
-      avgRating = 0;
-    } else{
-      avgRating = result.dataValues.rating;
-    }
-    
-    return res.status(200).json(avgRating)
-
-  } catch(error){
-    return res.status(400).json({message: "Failed to retrieve rating"})
-    console.log(error)
   }
 
 })
