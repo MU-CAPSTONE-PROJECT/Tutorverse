@@ -117,11 +117,13 @@ const Schedule = sequelize.define('Schedules', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-},
+}, {
+  tableName: 'Schedules',
+  timestamps: false,
+});
 
-  //Schedule-User association
-  Schedule.belongsTo(User, { foreignKey: 'tutorId' })
-);
+// Define the association with the Users table
+Schedule.belongsTo(User, { foreignKey: 'tutorId' });
 
 
 async () => {
@@ -133,4 +135,4 @@ async () => {
   }
 };
 
-module.exports = { sequelize, User, Message, Rating };
+module.exports = { sequelize, User, Message, Rating, Schedule };

@@ -14,7 +14,7 @@ import "./StudentHome.css";
 export default function StudentHome() {
   const { user, updateUser } = useContext(UserContext);
   const [tutors, setTutors] = useState([]);
-
+  const navigate = useNavigate();
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -24,7 +24,6 @@ export default function StudentHome() {
 
     return () => clearInterval(interval);
   }, []);
-
 
     //GET request for tutorlist
   useEffect(() => {
@@ -69,7 +68,7 @@ export default function StudentHome() {
       <div className="tutor-view">
         <div className="tutor-list">
           {tutors.map((tutor) => (
-            <TutorCard key={tutor.id} tutor={tutor} getRating= {getRating}/>
+            <TutorCard key={tutor.id} tutor={tutor} />
           ))}
         </div>
         <div className="tutor-map">
