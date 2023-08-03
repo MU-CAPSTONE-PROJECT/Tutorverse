@@ -7,7 +7,7 @@ const session = require("express-session");
 
 const cors = require("cors");
 
-const { sequelize, User , Message, Rating} = require("./data");
+const { sequelize, User , Message, Rating, Schedule} = require("./data");
 
 const { Op } = require ('sequelize');
 
@@ -175,13 +175,48 @@ app.get("/tutors/recommended", async(req,res) =>{
 
     });
     console.log(highlyRatedTutorIds)
-    return res.json(highlyRatedTutorIds);
-    
+
+    const weekDays = ["Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    const dayToday = weekDays[new Date().getDay()];
+
+    async function fetchTutorsWithSessionToday() {
+      try {
+         // Track unique tutor IDs
+        const uniqueTutorIds = new Set();
+        const currentHour = new Date().getHours();
+
+        const tutors = await Schedule.findAll({
+          where: { 
+            tutorId: highlyRatedTutorIds, 
+            dayOfWeek: dayToday },
+            startTime: { [Op.gte]: currentHour }, //Exclude sessions that have passed
+        });
+       
+        tutors.forEach((tutor) => {
+          uniqueTutorIds.add(tutor.tutorId);
+          
+        });
+
+        const tutorsWithSessionToday = await Promise.all(
+          Array.from(uniqueTutorIds).map((tutorId) => {
+            return User.findOne({ where: { id: tutorId } });
+          })
+        );
+
+        console.log(tutorsWithSessionToday);
+        return res.json(tutorsWithSessionToday);
+
+      } catch (error) {
+        console.error("Failed to fetch schedule:", error);
+      }
+    }
+
+    fetchTutorsWithSessionToday();
+        
   }).catch(error => {
     console.log(error,"Failed to fetch tutors")
   })
   
-
 })
 
 //Individual tutor
@@ -338,7 +373,7 @@ app.listen(3000, function (err) {
 
 (async () => {
   try {
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     console.log("Database synchronized");
   } catch (error) {
     console.error("Error synchronizing database:", error);
