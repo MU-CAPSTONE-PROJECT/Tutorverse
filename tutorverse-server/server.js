@@ -7,7 +7,9 @@ const session = require("express-session");
 
 const cors = require("cors");
 
-const { sequelize, User , Message, Rating} = require("./data");
+const { sequelize, User , Message, Rating, Schedule} = require("./data");
+
+const { Op } = require ('sequelize');
 
 const fetch = require("node-fetch");
 
@@ -126,6 +128,100 @@ app.get("/tutors", async (req, res) => {
   }
 });
 
+//Recommended Tutor API
+app.get("/tutors/recommended", async(req,res) =>{
+
+  //Use req.body.user.session
+
+  studentId = req.body.id;
+  const tutorsInteractedWithIds = [];
+  //Find IDS of all tutors student sent message to
+  const tutorsMessagedIds = await Message.findAll(
+    {where:{senderId: studentId},
+    attributes: [
+      [sequelize.fn('DISTINCT',sequelize.col('recepientId')),'uniqueId']]
+  })
+  console.log(tutorsMessagedIds[0].getDataValue("uniqueId"))
+  
+  tutorsMessagedIds.forEach(tutor =>
+    tutorsInteractedWithIds.push(tutor.getDataValue('uniqueId'))
+  )
+  
+  //Find IDs of all tutors students rated
+  const tutorsRatedIds = await Rating.findAll(
+    {where:{studentId},
+      attributes: [
+      [sequelize.fn('DISTINCT',sequelize.col('tutorId')),'uniqueId']]
+    }
+  )
+  tutorsRatedIds.forEach((tutor) => 
+    tutorsInteractedWithIds.push(tutor.getDataValue('uniqueId'))
+  )
+  const tutorIdsSet = new Set()
+
+  tutorsInteractedWithIds.forEach(id =>{
+    tutorIdsSet.add(id)
+  })
+  console.log(tutorIdsSet)
+
+  //Filter by rating and schedule availability
+  const highlyRatedTutorIds = []
+  
+  const tutorIds = Array.from(tutorIdsSet)
+
+  User.findAll({where:{id:tutorIds, rating: {[Op.gt]:2},  }}).then(tutors =>{
+    tutors.map(tutor =>{
+      highlyRatedTutorIds.push(tutor.id)
+
+    });
+    console.log(highlyRatedTutorIds)
+
+    const weekDays = ["Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    const dayToday = weekDays[new Date().getDay()];
+
+    async function fetchTutorsWithSessionToday() {
+      try {
+         // Track unique tutor IDs
+        const uniqueTutorIds = new Set();
+        const currentHour = new Date().getHours();
+
+        const tutors = await Schedule.findAll({
+          where: { 
+            tutorId: highlyRatedTutorIds, 
+            dayOfWeek: dayToday,
+            startTime: { [Op.gte]: currentHour }, //Exclude sessions that have passed
+          },
+          order: [['startTime', 'ASC']], // Order by startTime in ascending order
+            
+        });
+        console.log(tutors[0])
+        tutors.forEach((tutor) => {
+          uniqueTutorIds.add(tutor.tutorId);
+          
+        });
+
+        const tutorsWithSessionToday = await Promise.all(
+          Array.from(uniqueTutorIds).map((tutorId) => {
+            return User.findOne({ where: { id: tutorId } });
+          })
+        );
+
+        console.log(tutorsWithSessionToday);
+        return res.json(tutorsWithSessionToday);
+
+      } catch (error) {
+        console.error("Failed to fetch schedule:", error);
+      }
+    }
+
+    fetchTutorsWithSessionToday();
+        
+  }).catch(error => {
+    console.log(error,"Failed to fetch tutors")
+  })
+  
+})
+
 //Individual tutor
 app.get("/tutor/:tutorId", async (req, res) => {
   const tutorId = parseInt(req.params.tutorId);
@@ -142,7 +238,6 @@ app.get("/tutor/:tutorId", async (req, res) => {
 app.get('/messages', async (req, res) => {
 
   const id = req.session.user.id;
-  const { Op } = require ('sequelize');
 
   try{
 
@@ -281,7 +376,7 @@ app.listen(3000, function (err) {
 
 (async () => {
   try {
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     console.log("Database synchronized");
   } catch (error) {
     console.error("Error synchronizing database:", error);

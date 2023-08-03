@@ -91,6 +91,41 @@ const Rating = sequelize.define('Ratings', {
 
 })
 
+const Schedule = sequelize.define('Schedules', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  tutorId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Users',
+      key: 'id',
+    },
+  },
+  dayOfWeek: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  startTime: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  endTime: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+}, {
+  tableName: 'Schedules',
+  timestamps: false,
+});
+
+// Define the association with the Users table
+Schedule.belongsTo(User, { foreignKey: 'tutorId' });
+
+
 async () => {
   try {
     await sequelize.sync({ alter: true });
@@ -100,4 +135,4 @@ async () => {
   }
 };
 
-module.exports = { sequelize, User, Message, Rating };
+module.exports = { sequelize, User, Message, Rating, Schedule };
