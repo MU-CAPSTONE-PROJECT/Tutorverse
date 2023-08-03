@@ -163,12 +163,26 @@ app.get("/tutors/recommended", async(req,res) =>{
     tutorIdsSet.add(id)
   })
   console.log(tutorIdsSet)
+
+  //Filter by rating and schedule availability
+  const highlyRatedTutorIds = []
   
-  return res.json(tutorIdsSet)
+  const tutorIds = Array.from(tutorIdsSet)
+
+  User.findAll({where:{id:tutorIds, rating: {[Op.gt]:2},  }}).then(tutors =>{
+    tutors.map(tutor =>{
+      highlyRatedTutorIds.push(tutor.id)
+
+    });
+    console.log(highlyRatedTutorIds)
+    return res.json(highlyRatedTutorIds);
+    
+  }).catch(error => {
+    console.log(error,"Failed to fetch tutors")
+  })
+  
 
 })
-
-
 
 //Individual tutor
 app.get("/tutor/:tutorId", async (req, res) => {
