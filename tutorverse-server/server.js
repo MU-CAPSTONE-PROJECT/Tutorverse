@@ -188,10 +188,13 @@ app.get("/tutors/recommended", async(req,res) =>{
         const tutors = await Schedule.findAll({
           where: { 
             tutorId: highlyRatedTutorIds, 
-            dayOfWeek: dayToday },
+            dayOfWeek: dayToday,
             startTime: { [Op.gte]: currentHour }, //Exclude sessions that have passed
+          },
+          order: [['startTime', 'ASC']], // Order by startTime in ascending order
+            
         });
-       
+        console.log(tutors[0])
         tutors.forEach((tutor) => {
           uniqueTutorIds.add(tutor.tutorId);
           
