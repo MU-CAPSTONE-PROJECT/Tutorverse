@@ -114,13 +114,27 @@ app.post("/save/location", async (req, res) => {
   
 })
 
-//List of tutors
+//List of all tutors
 app.get("/tutors/all", async (req, res) => {
   console.log(req.session.user);
   try {
     const currUser = req.session.user;
     const tutors = await User.findAll({
       where: { userRole: "tutor", school: currUser.school },
+    });
+    return res.status(200).json(tutors);
+  } catch (error) {
+    return res.status(404).json({error});
+  }
+});
+
+//List of active tutors
+app.get("/tutors/active", async (req, res) => {
+  
+  try {
+    const currUser = req.session.user;
+    const tutors = await User.findAll({
+      where: { userRole: "tutor", school: currUser.school, activeStatus: true },
     });
     return res.status(200).json(tutors);
   } catch (error) {
@@ -190,6 +204,7 @@ app.get("/tutors/recommended", async(req,res) =>{
             // startTime: { [Op.gte]: currentHour }, //Exclude sessions that have passed
           },
           order: [['startTime', 'ASC']], // Order by startTime in ascending order
+          
             
         });
         console.log(tutors[0])
