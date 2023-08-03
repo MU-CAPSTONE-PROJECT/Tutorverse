@@ -51,6 +51,9 @@ const User = sequelize.define("Users", {
   coursesOffered: {
     type: DataTypes.STRING,
   },
+  activeStatus: {
+    type: DataTypes.BOOLEAN,
+  },
 
 });
 

@@ -24,11 +24,16 @@ socketIO.on('connection', (socket) => {
   if (userId) {
     //Check is user exists in DB
     User.findByPk(userId)
-      .then((user) => {
+      .then(async (user) => {
         if (!user) {
           console.log("Invalid user ID. Disconnecting socket.");
           socket.disconnect(true);
         } else {
+
+          //Update connected user active status to true
+          await User.update({activeStatus: true}, {where: {id: userId}})
+          console.log("ACTIVE!!")
+
           if (!userSocketIds[userId]) {
             userSocketIds[userId] = new Set();
           }
@@ -65,8 +70,6 @@ socketIO.on('connection', (socket) => {
       });
       });
     }
-
-    //TODO Store message in DB
     
     //
     if (userSocketIds[userId]) {
@@ -81,8 +84,11 @@ socketIO.on('connection', (socket) => {
     }
     
   });
-  socket.on('disconnect', () => {
+  socket.on('disconnect', async () => {
     console.log('User disconnected:', socket.id);
+
+    //Update active status to false
+    await User.update({activeStatus: false}, {where: {id: userId}})
     
     // Clean up disconnected socket.id from userSocketIds
     for (const [userId, socketIds] of Object.entries(userSocketIds)) {
