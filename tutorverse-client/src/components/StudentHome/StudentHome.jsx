@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import SchoolIcon from '@mui/icons-material/School';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import Chip from '@mui/material/Chip';
 import MapView from "../MapView/MapView";
 import "./StudentHome.css";
 
@@ -16,6 +17,8 @@ export default function StudentHome() {
   const [tutors, setTutors] = useState([]);
   const navigate = useNavigate();
   const [time, setTime] = useState(new Date());
+  const [selectedFilter, setSelectedFilter] = useState('recommended');
+  const filters = ['recommended', 'all', 'active', 'under 2 miles away'];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -25,21 +28,31 @@ export default function StudentHome() {
     return () => clearInterval(interval);
   }, []);
 
-    //GET request for tutorlist
-  useEffect(() => {
-    const fetchTutors = async () => {
-      const response = await axios.get("http://localhost:3000/tutors", {
+  const handleFilterSelect = (filter) => {
+    setSelectedFilter(filter);
+    fetchTutors(filter);
+  };
+
+  //GET request for tutorlist
+  const fetchTutors = async (filter) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/tutors/${filter}`, {
         withCredentials: true,
       });
-      setTutors(response.data.list);
-      console.log(response.data.list);
-    };
-    fetchTutors();
+      setTutors(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching tutors:", error);
+    }
+  };
+  
+  //Initial fetch for default recommended filter
+  useEffect(() => {
+    fetchTutors(selectedFilter)
+  }, [time, selectedFilter]);
 
-  }, [time]);
 
 
- 
   const handleLogout = () => {
     updateUser(null);
   };
@@ -64,7 +77,18 @@ export default function StudentHome() {
         </div>
       </div>
       <h3>Welcome, {user.firstName}</h3>
-
+      
+      <div>
+        {filters.map((filter) => (
+            <Chip
+              key={filter}
+              label={filter}
+              color={selectedFilter === filter ? 'primary' : 'default'}
+              onClick={() => handleFilterSelect(filter)}
+              style={{ margin: '4px' }}
+            />
+          ))}
+      </div>
       <div className="tutor-view">
         <div className="tutor-list">
           {tutors.map((tutor) => (
