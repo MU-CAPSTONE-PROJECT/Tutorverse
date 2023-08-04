@@ -153,7 +153,6 @@ app.get("/tutors/recommended", async(req,res) =>{
     attributes: [
       [sequelize.fn('DISTINCT',sequelize.col('recepientId')),'uniqueId']]
   })
-  console.log(tutorsMessagedIds[0].getDataValue("uniqueId"))
   
   tutorsMessagedIds.forEach(tutor =>
     tutorsInteractedWithIds.push(tutor.getDataValue('uniqueId'))
@@ -285,15 +284,37 @@ app.get("/chatlist", async (req,res) => {
       return res.status(404).json({ message: error, list: null });
     }
   } else{
-    Message.findAll({ where: {recepientId: req.session.user.id}}).then(messages => {
-      const studentIDs = messages.map(message => message.senderId);
-      User.findAll({where: {id: studentIDs}})
-      .then(students => res.json(students))
-      .catch(error => {
-        console.error('Error fetching students:', error);
-        res.status(500).json({ error: "Internal server error"})
-      })
+    const studentIDs = new Set();
+    
+    Message.findAll({ 
+      where: {recepientId: req.session.user.id},
+      order: [['createdAt', 'DESC']]
+    
+    }).then(messages => {
+      messages.map((message) => 
+        studentIDs.add(message.senderId)
+      );
+      console.log(studentIDs)
       
+    const students = Array.from(studentIDs);
+    const fetchedStudents = [];
+
+    Promise.all(
+      students.map(async (studentId) => {
+        try {
+          const student = await User.findOne({ where: { id: studentId } });
+          fetchedStudents.push(student);
+        } catch (error) {
+          console.error('Error fetching students:', error);
+          res.status(500).json({ error: "Internal server error" });
+        }
+      })
+    
+      )
+      .then(() => {
+        res.json(fetchedStudents)
+      });
+
     
   }).catch(error => {
     console.error('Error fetching messages:', error);
