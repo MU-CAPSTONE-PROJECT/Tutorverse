@@ -31,7 +31,7 @@ socketIO.on('connection', (socket) => {
         } else {
 
           //Update connected user active status to true
-          await User.update({activeStatus: true}, {where: {id: userId}})
+          await User.update({activeStatus: 1}, {where: {id: userId}})
           console.log("ACTIVE!!")
 
           if (!userSocketIds[userId]) {
@@ -88,7 +88,7 @@ socketIO.on('connection', (socket) => {
     console.log('User disconnected:', socket.id);
 
     //Update active status to false
-    await User.update({activeStatus: false}, {where: {id: userId}})
+    await User.update({activeStatus: 0}, {where: {id: userId}})
     
     // Clean up disconnected socket.id from userSocketIds
     for (const [userId, socketIds] of Object.entries(userSocketIds)) {
