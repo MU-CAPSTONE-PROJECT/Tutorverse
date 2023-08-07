@@ -9,6 +9,8 @@ const cors = require("cors");
 
 const { sequelize, User , Message, Rating, Schedule} = require("./data");
 
+const haversine = require('haversine-distance')
+
 const { Op } = require ('sequelize');
 
 const fetch = require("node-fetch");
@@ -134,7 +136,7 @@ app.get("/tutors/active", async (req, res) => {
   try {
     const currUser = req.session.user;
     const tutors = await User.findAll({
-      where: { userRole: "tutor", school: currUser.school, activeStatus: true },
+      where: { userRole: "tutor", school: currUser.school, activeStatus: 1 },
     });
     return res.status(200).json(tutors);
   } catch (error) {
@@ -145,7 +147,8 @@ app.get("/tutors/active", async (req, res) => {
 //Recommended Tutor API
 app.get("/tutors/recommended", async(req,res) =>{
 
-  studentId = req.session.user.id;
+  const student = req.session.user
+  const studentId = student.id
   const tutorsInteractedWithIds = [];
   //Find IDS of all tutors student sent message to
   const tutorsMessagedIds = await Message.findAll(
@@ -177,20 +180,19 @@ app.get("/tutors/recommended", async(req,res) =>{
 
   //Filter by rating and schedule availability
   const highlyRatedTutorIds = []
-  
+
   const tutorIds = Array.from(tutorIdsSet)
 
-  User.findAll({where:{id:tutorIds, rating: {[Op.gt]:2},  }}).then(tutors =>{
+  User.findAll({where:{id:tutorIds, rating: {[Op.gt]:2},  }}).then( async tutors =>{
     tutors.map(tutor =>{
       highlyRatedTutorIds.push(tutor.id)
 
     });
-    console.log(highlyRatedTutorIds)
 
     const weekDays = ["Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     const dayToday = weekDays[new Date().getDay()];
 
-    async function fetchTutorsWithSessionToday() {
+    async function fetchRecommendedTutors() {
       try {
          // Track unique tutor IDs
         const uniqueTutorIds = new Set();
@@ -199,34 +201,170 @@ app.get("/tutors/recommended", async(req,res) =>{
         const tutors = await Schedule.findAll({
           where: { 
             tutorId: highlyRatedTutorIds, 
-            dayOfWeek: dayToday,
+            dayOfWeek: dayToday, //Tutors who have sessions today
             // startTime: { [Op.gte]: currentHour }, //Exclude sessions that have passed
           },
           order: [['startTime', 'ASC']], // Order by startTime in ascending order
           
             
         });
-        console.log(tutors[0])
+        
         tutors.forEach((tutor) => {
           uniqueTutorIds.add(tutor.tutorId);
           
         });
 
-        const tutorsWithSessionToday = await Promise.all(
+        const result = await Promise.all(
           Array.from(uniqueTutorIds).map((tutorId) => {
             return User.findOne({ where: { id: tutorId } });
           })
         );
+        const recommendedTutors = []
 
-        console.log(tutorsWithSessionToday);
-        return res.json(tutorsWithSessionToday);
+        result.map(tutor=>{
+          recommendedTutors.push(tutor.dataValues)
+        })
+        
+        console.log(highlyRatedTutorIds, "IDS")
+        console.log(recommendedTutors)
+        
+        //Recommended Tutor Score
+        const tutorsWithScores = await Promise.all(recommendedTutors.map( async tutor =>{
+          const messageCount = await Message.count({
+            where:{ [Op.or]: [{senderId: tutor.id}, {recepientId: tutor.id}]}
+          })
 
+          const averageRating = tutor.rating;
+
+          const rating = await Rating.findOne({where: {studentId}})
+
+          const studentRatingForTutor = rating.getDataValue('rating')
+
+          // retrieve timestamp
+          const timestamp = tutor.createdAt
+          const accountCreationDate = new Date(timestamp);
+          const currentDate = new Date();  // Get the current date
+
+          // Calculate the account age in months
+          const accountAge = (currentDate.getFullYear() - accountCreationDate.getFullYear()) * 12 +
+            currentDate.getMonth() - accountCreationDate.getMonth();
+            
+          //Calculate distance using Haversine function for distance on spheres
+          const distanceFromStudent = (haversine(
+            {latitude:student.latitude, longitude: student.longitude},
+             {latitude: tutor.latitude, longitude: tutor.longitude})) * 0.000621371   //to miles
+
+          const activeStatus = tutor.activeStatus
+
+          const slotsPerWeek = await Schedule.count({
+            where: {tutorId: tutor.id}
+          })
+
+          //Calculate Recommendation Percentage Score
+          const calculateTutorScore = () => {
+            const scoringRanges = {
+              messageCount: [
+                { range: [0, 0], score: 0 },
+                { range: [0, 5], score: 5 },
+                { range: [5, 10], score: 10 },
+                { range: [10, 50], score: 20 },
+                { range: [50, Infinity ], score: 30 },
+              ],
+              averageRating: [
+                { range: [0, 2], score: 0 },
+                { range: [2, 4], score: 10 },
+                { range: [4, 5], score: 20 },
+              ],
+              studentRatingForTutor: [
+                { range: [0, 4], score: 0 },
+                { range: [4, 4.5], score: 10 },
+                { range: [4.5, 6], score: 20 },
+              ],
+              accountAge: [
+                { range: [0, 0], score: 0 },//months
+                { range: [0, 1], score: 5 }, 
+                { range: [1, 6], score: 10 },
+                { range: [2, Infinity], score: 20 },
+              ],
+              distanceFromStudent: [
+                { range: [5, Infinity], score: 5 }, //miles
+                { range: [3, 5], score: 10 },
+                { range: [1, 3], score: 20 },
+                { range: [0, 1], score: 30 }, 
+              ],
+              activeStatus: [
+                { range: [0, 1], score: 0 }, // Not active
+                { range: [1, Infinity], score: 10 }, // Active
+              ],
+              slotsPerWeek: [
+                { range: [0, 1], score: 5 },
+                { range: [1, 3], score: 10 },
+                { range: [3, Infinity], score: 20 },
+              ]
+            }
+            const scoringWeights = {
+              messageCount: 0.20,
+              averageRating: 0.05,
+              studentRatingForTutor: 0.05,
+              accountAge: 0.05,
+              distanceFromStudent: 0.25,
+              activeStatus: 0.30,
+              slotsPerWeek: 0.10,
+            
+            }
+            const attributes = {
+
+              messageCount: messageCount,
+              averageRating: averageRating,
+              studentRatingForTutor: studentRatingForTutor,
+              distanceFromStudent: distanceFromStudent,
+              accountAge: accountAge,
+              activeStatus: activeStatus,
+              slotsPerWeek: slotsPerWeek,
+            }
+
+            // Calculate the weighted sum of all tutor's attributes
+            const weightedSum = Object.keys(attributes).reduce((sum, attribute) => {
+              const attributeValue = attributes[attribute];
+
+              // Find the appropriate scoring range for the attribute's value  
+                const attributeScoringRange = scoringRanges[attribute].find(range =>
+                attributeValue >= range.range[0] && attributeValue < range.range[1]
+              );
+
+              // Multiply score from range by assigned weight
+              const attributeScore = attributeScoringRange.score * scoringWeights[attribute];
+              
+              // Add the weighted score to the accumulated sum
+              return sum + attributeScore;
+            }, 0);
+
+            // Calculate the total possible score
+            const maxScore = Object.keys(attributes).reduce(
+              (sum, attribute) => sum + scoringRanges[attribute][scoringRanges[attribute].length-1].score * scoringWeights[attribute],
+              0
+            );
+            const percentageScore = (weightedSum/maxScore) * 100;
+              return percentageScore
+          }
+          const tutorScore = calculateTutorScore();
+          
+          tutor.score = tutorScore
+         
+          return tutor
+        }));
+        
+        return tutorsWithScores
       } catch (error) {
         console.error("Failed to fetch schedule:", error);
       }
-    }
+      
 
-    fetchTutorsWithSessionToday();
+    };
+
+    const finalTutorsList = await fetchRecommendedTutors();
+    
+    return res.json(finalTutorsList)
         
   }).catch(error => {
     console.log(error,"Failed to fetch tutors")
