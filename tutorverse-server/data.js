@@ -52,7 +52,7 @@ const User = sequelize.define("Users", {
     type: DataTypes.STRING,
   },
   activeStatus: {
-    type: DataTypes.BOOLEAN,
+    type: DataTypes.INTEGER,
   },
 
 });
