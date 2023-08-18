@@ -349,7 +349,8 @@ app.get("/tutors/recommended", async(req,res) =>{
           }
           const tutorScore = calculateTutorScore();
           
-          tutor.score = tutorScore
+          
+          tutor.score = Math.trunc(tutorScore)+20
          
           return tutor
         }));
@@ -385,22 +386,30 @@ app.get("/tutor/:tutorId", async (req, res) => {
 });
 
 //Endpoint for retrieving messages from DB
-app.get('/messages', async (req, res) => {
+app.post('/messages', async (req, res) => {
 
-  const id = req.session.user.id;
+  console.log(req.body, "nooooo")
+  const id = req.body.user.id;
+  const chat = req.body.selectedUser
 
   try{
 
     //retrieve all messages where user is either sender or recipient
     const messages = await Message.findAll({where: 
-    
-    { [Op.or]: [
+    {[Op.or]:[
+    { [Op.and]: [
       {senderId: id},
-      {recepientId: id}
+      {recepientId: chat.id}
     ]
-  }
+    }, {
+      [Op.and]: [
+        {senderId: chat.id},
+        {recepientId: id}
+      ]
+      }
+    ]}
   })
-  console.log("success!")
+  console.log("success!", messages)
   return res.status(200).json(messages)
 
   } catch (error) {
@@ -411,13 +420,53 @@ app.get('/messages', async (req, res) => {
 
 //Chatlist endpoint
 app.get("/chatlist", async (req,res) => {
-  if (req.session.user.userRole==="student"){
+  const currUser = req.session.user
+  console.log(currUser.userRole,"GAAA")
+  if (currUser.userRole==="student"){
     try {
-      const currUser = req.session.user;
-      const tutors = await User.findAll({
-        where: { userRole: "tutor", school: currUser.school },
+
+      const messages = await Message.findAll({
+        where: {
+          [Op.or]: [
+            { recepientId: currUser.id },
+            { senderId: currUser.id }
+          ]
+        },
+        order: [['createdAt', 'DESC']]
       });
-      return res.status(200).json(tutors);
+     
+
+      // Extract unique tutor IDs from the retrieved messages
+      const tutorIds = new Set();
+      messages.forEach((message) => {
+        if (message.senderId !== currUser.id) {
+          tutorIds.add(message.senderId);
+        }
+        if (message.recepientId !== currUser.id) {
+          tutorIds.add(message.recepientId);
+        }
+      });
+      
+      // Convert the set of tutor IDs to an array 
+      const uniqueTutorIds = Array.from(tutorIds);
+      console.log(uniqueTutorIds)
+      const tutors = await Promise.all(
+        uniqueTutorIds.map(async (id) => {
+          return await User.findOne({ where: { id } });
+        })
+      );
+    
+      const additionalTutors = await User.findAll({
+        where: {[Op.and]: [
+          {userRole: 'tutor', school: currUser.school},
+          {[Op.not]: [{id: uniqueTutorIds}]}
+        ]}
+      });
+    
+      const allTutors = [...tutors, ...additionalTutors];
+    
+      return res.status(200).json(allTutors);
+      
     } catch (error) {
       return res.status(404).json({ message: error, list: null });
     }
@@ -497,7 +546,8 @@ async function updateTutorRating(tutorId) {
       raw: true,
     });
 
-    const avgRating = result.averageRating || 0;
+    const avgRating = (result.averageRating || 0).toFixed(2);
+
 
     await User.update(
       { rating: avgRating },

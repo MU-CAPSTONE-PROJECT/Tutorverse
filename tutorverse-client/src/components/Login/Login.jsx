@@ -47,7 +47,7 @@ export default function Login() {
 
   return (
     <div className="main">
-      <div>
+      <div className="intro">
         <h1>Welcome Back to the Tutorverse</h1>
         <h4>We missed you</h4>
       </div>
@@ -76,10 +76,11 @@ export default function Login() {
           Login
         </button>
         <div>
-          <p>New User?</p>
-          <Link to="/pick_role">
-            <p>Register</p>
-          </Link>
+          <p>New User?  <Link to="/pick_role">
+              Register
+            </Link></p>
+          
+            
         </div>
       </div>
     </div>

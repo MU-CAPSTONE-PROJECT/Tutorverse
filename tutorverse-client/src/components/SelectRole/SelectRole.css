@@ -1,5 +1,73 @@
-.selectRole {
-  width: 100%;
-  height: 100%;
+.container {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+}
+
+.tutorverse {
+  color:#F59525;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  margin: 0;
+}
+
+.content {
+  text-align: center;
+}
+
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  
+}
+
+.role-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.role-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.student-btn {
+  background-color: #3498db;
+  color: white;
+}
+
+.tutor-btn {
+  background-color: #3498db;
+  color: white;
+}
+
+.selected {
+  background-color: #F59525 !important;
+}
+
+.join-now {
+  font-size: 1.2rem;
+}
+
+.next-btn {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #27ae60;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.next-btn:hover {
+  background-color: #218f54;
 }

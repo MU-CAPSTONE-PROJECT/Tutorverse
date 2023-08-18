@@ -1,18 +1,24 @@
 .landing-navbar {
+  position: fixed;
+  z-index: 1000;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   height: 70px;
 }
 .landing-navbar .left {
   display: flex;
+  gap: 10px;
 }
 .landing-navbar .right {
   display: flex;
   width: 40%;
-  justify-content: space-between;
+  gap: 10px;
+  justify-content: right;
 }
 .landing-navbar .logo {
   display: inline;
+  align-self: center;
 }
 .landing-navbar .logo img {
   size: auto;
@@ -21,6 +27,8 @@
   color: white;
 }
 .landing-body .intro1 {
+  position: relative;
+  display: inline-block;
   height: auto;
   padding: none;
 }
@@ -30,5 +38,21 @@
   image-rendering: crisp-edges;
   padding: none;
   margin: none;
-  opacity: 35%;
+  opacity: 20%;
+  
+}
+.get-started-btn{
+  display: flex;
+  justify-content: center;
+
+}
+.login-btn{
+  width: auto;
+  height: fit-content;
+}
+.intro-text{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

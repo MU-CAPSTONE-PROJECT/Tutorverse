@@ -1,6 +1,7 @@
 import { GoogleMap, useJsApiLoader , Marker} from '@react-google-maps/api';
 import { useContext, useState , useCallback} from "react";
 import { UserContext } from "../../../../userContext";
+import { Circle } from 'react-google-maps';
 
 export default function MapView( {tutors} ) {
     const { user } = useContext(UserContext);
@@ -16,8 +17,9 @@ export default function MapView( {tutors} ) {
         height: '100vh'
       };
       const center = {
-                lat: user.latitude,
-                lng: user.longitude
+                lat: 37.847842409059645,
+                lng: -122.27095297575194,
+                
               }
       const onLoad = useCallback(function callback(map) {
        
@@ -35,10 +37,22 @@ export default function MapView( {tutors} ) {
           <GoogleMap
             mapContainerStyle={containerStyle}
             center={center}
-            zoom={10}
+            zoom={13}
             onLoad={onLoad}
             onUnmount={onUnmount}
           >
+            <Marker 
+              position={center}
+              icon={{
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 10, 
+                fillColor: '#f594259b',
+                fillOpacity: 1,
+                strokeWeight: 5
+              }}
+            >
+              You
+            </Marker>
             { tutors.map((tutor) => (
                 <Marker 
                     key= {tutor.id}

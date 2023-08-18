@@ -24,9 +24,9 @@ export default function Register({ school, userRole, coursesTaken, coursesOffere
           password,
           userRole,
           school,
-          coursesTaken,
-          coursesOffered,
-          schedule,
+          // coursesTaken,
+          // coursesOffered,
+          // schedule,
         },
         {
           withCredentials: true,
@@ -64,14 +64,16 @@ export default function Register({ school, userRole, coursesTaken, coursesOffere
 
   return (
     <div className="main">
-      <div>
+      <div className="bod">
         <div className="left">
           Get your free pass into the TutorVerse
+          <img alt="" src='./src/assets/My project.png'/>
           <div>Let's find you a cool tutor</div>
         </div>
         <div className="right">
           <div className="signup-form">
-            Sign up here
+            <h2>Sign up here </h2>
+            <label htmlFor="firstname-input">First Name</label>
             <input
               type="text"
               label="First Name"
@@ -81,6 +83,7 @@ export default function Register({ school, userRole, coursesTaken, coursesOffere
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
+            <label htmlFor="lastname-input">Last Name</label>
             <input
               type="text"
               label="Last Name"
@@ -90,6 +93,7 @@ export default function Register({ school, userRole, coursesTaken, coursesOffere
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
             />
+            <label htmlFor="email-input">Email</label>
             <input
               type="text"
               label="Email Address"
@@ -99,6 +103,7 @@ export default function Register({ school, userRole, coursesTaken, coursesOffere
               value={emailAddress}
               onChange={(e) => setEmail(e.target.value)}
             />
+            <label htmlFor="password-input">Password</label>
             <input
               type="password"
               label="Create Password"
@@ -108,6 +113,7 @@ export default function Register({ school, userRole, coursesTaken, coursesOffere
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            <label htmlFor="confirm-password">Confirm Password</label>
             <input
               type="password"
               label="Confirm Password"

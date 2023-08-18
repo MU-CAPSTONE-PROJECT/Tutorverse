@@ -31,16 +31,27 @@ export default function ChatHome({ user }) {
   }, [])
 
   useEffect( () => {
-    const fetchMessages = async () => {
-      const response = await axios.get("http://localhost:3000/messages",
+
+    if(selectedUser) {
+
+      const fetchMessages = async () => {
+      const response = await axios.post("http://localhost:3000/messages",
+      {
+        user,
+        selectedUser 
+      },
       {
         withCredentials: true,
       } 
       );
       setMessages(response.data);
+      console.log(messages)
     };
     fetchMessages();
-  },[newMessage])
+    }
+
+    
+  },[newMessage, selectedUser])
 
   const handleBackClick = () => {
     navigate("/dashboard");
@@ -69,7 +80,7 @@ export default function ChatHome({ user }) {
         socket.off("privateMessage");
       };
     }
-  });
+  },[socket]);
 
   //Sending message
   const sendMessage = () => {
@@ -108,24 +119,31 @@ export default function ChatHome({ user }) {
         <div className="icon" onClick={handleBackClick}>
           <ArrowBackIosIcon />
         </div>
+        <div>CHATS</div>
       </div>
-      <div>CHATS</div>
+      
       <div className="body">
         <div className="side-nav">
           {
             chats.map((chat) => (
-              <div key={chat.id} onClick={() => setSelectedUser(chat)}>
+              <div key={chat.id} onClick={() => setSelectedUser(chat)} className="chat">
                 {chat.firstName}
               </div>
             ))
           }
         </div>
+        <div className="divider"></div>
         <div className="chat-window">
+          <div className="chat-name">
+            {selectedUser ? selectedUser.firstName : "Select A Chat"}
+              
+          </div>
           <div className="chat-body">
             {messages.map((msg, index) => (
+              
               <div
                 key={index}
-                className={`message-${
+                className={`message message-${
                   msg.senderId === user.id ? "sent" : "received"
                 }`}
               >
@@ -147,6 +165,7 @@ export default function ChatHome({ user }) {
               className="send-btn"
               variant="contained"
               onClick={sendMessage}
+              sx={{backgroundColor:'#F59525'}}
             >
               Send
             </Button>

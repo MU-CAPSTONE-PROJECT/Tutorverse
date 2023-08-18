@@ -11,7 +11,7 @@ import { useEffect } from "react";
 import "./App.css";
 import ChatHome from "../ChatHome/ChatHome";
 import { UserContext } from "../../../../userContext";
-import TutorView from "../../../TutorView/TutorView";
+import TutorView from "../TutorView/TutorView";
 import SelectCourses from "../SelectCourses/SelectCourses";
 import TutorSubjects from "../TutorSubjects/TutorSubjects";
 import TutorSchedule from "../TutorSchedule/TutorSchedule";

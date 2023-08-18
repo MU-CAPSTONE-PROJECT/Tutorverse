@@ -1,33 +1,61 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
+import SchoolIcon from '@mui/icons-material/School';
+import MenuIcon from '@mui/icons-material/Menu';
 import "./LandingPage.css";
 
 export default function LandingPage() {
+
+
+  const navigate = useNavigate();
+
+  const getStartedBtn = () =>{
+    navigate("/pick_role")
+  }
+  const loginBtn = () => {
+    navigate("/login")
+  }
   return (
     <div>
       <div className="landing-navbar">
         <div className="left">
           <div className="logo">
-            <img src="./src/assets/educate-svgrepo-com.svg" alt="" />
+            <SchoolIcon/>
           </div>
-          <div>Tutorverse</div>
+          <div> <h3>TutorVerse </h3></div>
         </div>
         <div className="right">
-          <div>Login</div>
-          <div>Menu Hamburger</div>
+          <Button 
+            className="login-btn" 
+            variant="contained"  
+            onClick={loginBtn}
+            style={{backgroundColor:'#F59525'}}
+            >
+            Login
+          </Button>
+          <MenuIcon/>
         </div>
       </div>
       <div className="landing-body">
         <div className="intro1">
-          <img src="./src/assets/tutoring.jpg" alt="display image" />
+          <img src="./src/assets/tutoring.jpg" alt="display image"/>
+          <div className="intro-text">
+            <h2>
+              Welcome to the TutorVerse
+            </h2>
+          </div>
         </div>
       </div>
-      <div>
-        <Link to={"/pick_role"}>
-          {/* <button className="get-started-btn"> Get Started</button> */}
-          <Button variant="contained">Get Started</Button>
-        </Link>
+      <div className="get-started-btn">
+        <Button 
+          className="btn" 
+          variant="contained" 
+          onClick={getStartedBtn}
+          style={{backgroundColor:'#F59525'}}
+          >
+            Get Started
+        </Button>
+        
       </div>
     </div>
   );

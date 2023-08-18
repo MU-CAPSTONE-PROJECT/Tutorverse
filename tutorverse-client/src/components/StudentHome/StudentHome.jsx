@@ -66,17 +66,21 @@ export default function StudentHome() {
       <div className="student-nav">
         <div className="left">
           <div className="logo">
-            <SchoolIcon />
+            <SchoolIcon color="#F59525"/>
           </div>
           <div>Tutorverse</div>
         </div>
         <div className="right">
           <ChatBubbleIcon onClick={chatBtnClick}/>
-          <Button variant="contained" onClick={handleLogout} >Logout</Button>
+          <Button 
+           variant="contained" 
+           onClick={handleLogout} 
+           sx={{backgroundColor: '#F59525', borderRadius:'10px'}}
+           >Logout</Button>
           <MenuIcon/>
         </div>
       </div>
-      <h3>Welcome, {user.firstName}</h3>
+      <h3>Hi, {user.firstName}!</h3>
       
       <div>
         {filters.map((filter) => (
@@ -85,19 +89,21 @@ export default function StudentHome() {
               label={filter}
               color={selectedFilter === filter ? 'primary' : 'default'}
               onClick={() => handleFilterSelect(filter)}
-              style={{ margin: '4px' }}
+              style={{ margin: '4px', backgroundColor: selectedFilter===filter ? '#F59525' : 'white' }}
             />
           ))}
       </div>
-      <div className="tutor-view">
-        <div className="tutor-list">
+      <div className="tutor">
+         <div className="tutor-list">
           {tutors.map((tutor) => (
             <TutorCard key={tutor.id} tutor={tutor} />
           ))}
         </div>
+        
         <div className="tutor-map">
             <MapView tutors={tutors}/>
         </div>
+       
       </div>
     </div>
   );

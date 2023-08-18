@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  height: auto;
   background-color: #0a1526;
 
   align-items: center;
@@ -13,29 +13,36 @@
   flex-direction: column;
   gap: 10px;
   align-items: center;
-  width: 50%;
+  width: auto;
   height: 100%;
   background-color: #0a1526;
   justify-content: center;
   margin-top: 40px;
 }
+.tutor-card{
+  width: 100%;
+  height: 180px;
+}
 .tutor-map {
   margin-top: 40px;
-  width: 50%;
+  width: 70%;
   height: auto;
   border-radius: 5px;
 }
-.tutor-view {
+.tutor {
+  width: 100%;
   display: flex;
   flex-direction: row;
   gap: 10px;
 }
 
 .student-nav {
+  position: fixed;
+  z-index: 1000;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 110px;
+  height: 70px;
   width: 100%;
   background-color: #0a1526;
   color: white;
@@ -51,6 +58,7 @@
   width: 50%;
   gap: 10px;
   align-items: center;
+  justify-content: right;
 }
 
 .student-nav .logo {
